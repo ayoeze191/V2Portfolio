@@ -4,6 +4,7 @@ import Experience from "./Component/Experience";
 import Header from "./Component/Header";
 import Hero from "./Component/Hero";
 import Projects from "./Component/Projects";
+import Recommendations from "./Component/Recomendation";
 import TechStack from "./Component/TechStack";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <Experience />
       <Projects />
       <TechStack />
+      <Recommendations />
       <Contact />
       {/* Other sections will go here later */}
     </main>
