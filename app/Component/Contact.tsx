@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { Mail, MapPin, Phone, Send, Clock } from "lucide-react";
 import { useState } from "react";
-
+import React from "react";
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -13,7 +13,7 @@ export default function Contact() {
     message: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission here
     console.log(formData);
@@ -62,7 +62,7 @@ export default function Contact() {
                   icon: MapPin,
                   label: "Location",
                   value: "Lagos, Nigeria",
-                  action: null,
+                  action: undefined,
                 },
                 {
                   icon: Phone,
@@ -74,7 +74,7 @@ export default function Contact() {
                   icon: Clock,
                   label: "Response Time",
                   value: "Within 24 hours",
-                  action: null,
+                  action: undefined,
                 },
               ].map((item, index) => (
                 <motion.a
