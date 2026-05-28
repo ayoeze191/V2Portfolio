@@ -44,7 +44,7 @@ export default function About() {
             {/* Stats Cards - Vertical or side by side */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: Calendar, label: "Experience", value: "4+ Years" },
+                { icon: Calendar, label: "Experience", value: "3+ Years" },
                 { icon: MapPin, label: "Location", value: "Lagos, Nigeria" },
                 { icon: Award, label: "Focus", value: "Full-Stack" },
               ].map((item, index) => (
