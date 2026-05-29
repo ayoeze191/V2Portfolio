@@ -4,9 +4,16 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FaGithub } from "react-icons/fa";
+import Image from "next/image";
+import ekopages from "./../assets/images/Projects/ekopages.png";
+import dogify from "./../assets/images/Projects/Dogify.png";
+import Mctchey from "./../assets/images/Projects/Mctechy.png";
+import matacare from "./../assets/images/Projects/matacare.png";
+
 export default function Projects() {
   const projects = [
     {
+      image: "",
       title: "Learnpally Platform",
       description:
         "Full-stack education platform with web and mobile apps. Built course management, analytics dashboard, and real-time features.",
@@ -23,6 +30,7 @@ export default function Projects() {
       status: "Featured",
     },
     {
+      image: "",
       title: "RentAnything",
       description:
         "Complete rental marketplace with SSR, advanced search, booking system, and Google Maps integration.",
@@ -33,15 +41,17 @@ export default function Projects() {
     },
     // Add more projects here
     {
+      image: ekopages,
       title: "ekopages",
       description:
         "s an educational platform that uses SDG-themed children's literature, stories, courses, and programs to teach African children about environmental, gender, and sustainability issues affecting them .",
       tech: ["Next.js", "TypeScript", "Tailwind", "Django"],
-      live: "ekopages.com",
+      live: "https://ekopages.com",
       github: "",
       status: "Featured",
     },
     {
+      image: Mctchey,
       title: "Mktechy",
       description:
         "It's a comprehensive landing page for a tech bootcamp provider. Here is a breakdown of its main content and features, which you can use to describe your project..",
@@ -81,11 +91,19 @@ export default function Projects() {
               {/* Project Image / Placeholder */}
               <div className="h-64 bg-gradient-to-br from-teal-500/20 via-purple-500/10 to-[#050505] flex items-center justify-center relative">
                 <div className="text-6xl opacity-40 group-hover:opacity-60 transition-opacity">
-                  {project.title.includes("Learnpally")
-                    ? "📚"
-                    : project.title.includes("Rent")
-                      ? "🏠"
-                      : "🚀"}
+                  {project.image !== "" ? (
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : project.title.includes("Learnpally") ? (
+                    "📚"
+                  ) : project.title.includes("Rent") ? (
+                    "🏠"
+                  ) : (
+                    "🚀"
+                  )}
                 </div>
                 {project.status && (
                   <div className="absolute top-4 right-4 bg-teal-500 text-black text-xs font-semibold px-3 py-1 rounded-full">
