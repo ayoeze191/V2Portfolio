@@ -71,6 +71,7 @@ export const projects: Project[] = [
     year: "2025",
   },
   {
+    image: ekopages,
     id: 3,
     title: "EkoPages",
     description:
