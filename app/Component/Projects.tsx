@@ -9,11 +9,12 @@ import ekopages from "./../assets/images/Projects/ekopages.png";
 import dogify from "./../assets/images/Projects/Dogify.png";
 import Mctchey from "./../assets/images/Projects/Mctechy.png";
 import matacare from "./../assets/images/Projects/matacare.png";
-
+import learnpally from "./../assets/images/Projects/learnpally.png";
+import Link from "next/link";
 export default function Projects() {
   const projects = [
     {
-      image: "",
+      image: learnpally,
       title: "Learnpally Platform",
       description:
         "Full-stack education platform with web and mobile apps. Built course management, analytics dashboard, and real-time features.",
@@ -97,8 +98,6 @@ export default function Projects() {
                       alt={project.title}
                       className="w-full h-full object-cover"
                     />
-                  ) : project.title.includes("Learnpally") ? (
-                    "📚"
                   ) : project.title.includes("Rent") ? (
                     "🏠"
                   ) : (
@@ -156,9 +155,11 @@ export default function Projects() {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
-            View All Projects
-          </Button>
+          <Link href="/projects" className="cursor-pointer">
+            <Button variant="outline" size="lg">
+              View All Projects
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
