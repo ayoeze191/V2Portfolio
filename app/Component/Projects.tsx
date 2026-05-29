@@ -42,11 +42,11 @@ export default function Projects() {
       status: "Featured",
     },
     {
-      title: "https://mktechy.netlify.app/",
+      title: "Mktechy",
       description:
         "It's a comprehensive landing page for a tech bootcamp provider. Here is a breakdown of its main content and features, which you can use to describe your project..",
       tech: ["Next.js", "TypeScript", "Tailwind", "Prisma"],
-      live: "",
+      live: "https://mktechy.netlify.app/",
       github: "",
       status: "",
     },
