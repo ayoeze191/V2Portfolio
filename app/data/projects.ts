@@ -1,7 +1,14 @@
 import { Project } from "../Component/ProjectCard";
+import ekopages from "./../assets/images/Projects/ekopages.png";
+import dogify from "./../assets/images/Projects/Dogify.png";
+import Mctchey from "./../assets/images/Projects/Mctechy.png";
+import matacare from "./../assets/images/Projects/matacare.png";
+import learnpally from "./../assets/images/Projects/learnpally.png";
+import githubUserFinder from "./../assets/images/Projects/githubfindme.png";
 
 export const projects: Project[] = [
   {
+    image: "",
     id: 1,
     title: "AI Email Composer",
     description:
@@ -16,7 +23,7 @@ export const projects: Project[] = [
       "Nodemailer",
       "Tailwind CSS",
     ],
-    githubLink: "https://github.com/yourusername/ai-email-composer",
+    githubLink: "https://github.com/ayoeze191/ai-email-composer",
     liveLink: "https://ai-email-composer.demo.com",
     features: [
       "AI-powered email generation from natural language prompts",
@@ -33,6 +40,7 @@ export const projects: Project[] = [
     year: "2025",
   },
   {
+    image: githubUserFinder,
     id: 2,
     title: "GitHub User Finder",
     description:
@@ -46,8 +54,8 @@ export const projects: Project[] = [
       "Framer Motion",
       "Tailwind CSS",
     ],
-    githubLink: "https://github.com/yourusername/github-user-finder",
-    liveLink: "https://github-user-finder.demo.com",
+    githubLink: "https://github.com/ayoeze191/githubUserFinder",
+    liveLink: "https://github-user-finder-eazy.vercel.app/",
     features: [
       "Search any GitHub user by username",
       "Display avatar, bio, followers, following, and public repos",
@@ -70,6 +78,7 @@ export const projects: Project[] = [
     longDescription:
       "An EdTech platform that uses SDG-themed children's literature, stories, and programs to educate African children about environmental, gender, and sustainability issues.",
     tech: ["Next.js", "Node.js", "MongoDB", "Tailwind CSS", "Framer Motion"],
+    githubLink: "https://github.com/ayoeze191/ekopages",
     liveLink: "https://ekopages.com",
     features: [
       "SDG-themed children's literature library",
@@ -86,6 +95,7 @@ export const projects: Project[] = [
     year: "2024",
   },
   {
+    image: Mctchey,
     id: 4,
     title: "McTechy",
     description:
@@ -93,6 +103,7 @@ export const projects: Project[] = [
     longDescription:
       "A high-conversion landing page for a coding bootcamp, designed to showcase courses, highlight career outcomes, and capture leads through strategic CTAs.",
     tech: ["React", "Tailwind CSS", "Framer Motion", "Form Validation"],
+    githubLink: "https://github.com/ayoeze191/mctechy",
     liveLink: "https://mktechy.netlify.app",
     features: [
       "Course catalog with 5+ programs",
@@ -109,6 +120,7 @@ export const projects: Project[] = [
     year: "2023",
   },
   {
+    image: dogify,
     id: 5,
     title: "Dogify",
     description:

@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Github, ExternalLink } from "lucide-react";
-
+import { ArrowRight } from "lucide-react";
+import { StaticImageData } from "next/dist/shared/lib/image-external";
+import Image from "next/image";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 export interface Project {
   id: number;
   title: string;
   description: string;
   longDescription?: string;
-  image?: string;
+  image?: StaticImageData | string | StaticImport;
   tech: string[];
   githubLink?: string;
   liveLink?: string;
@@ -38,8 +40,18 @@ export function ProjectCard({
         className="glass border border-white/10 rounded-2xl overflow-hidden hover:border-teal-400/40 transition-all duration-300 flex flex-col h-full"
       >
         {/* Image placeholder */}
-        <div className="h-48 bg-gradient-to-br from-teal-500/20 to-purple-600/20 flex items-center justify-center">
-          <span className="text-5xl">{project.title[0]}</span>
+        <div className="relative h-48 bg-gradient-to-br from-teal-500/20 to-purple-600/20 flex items-center justify-center">
+          {project.image ? (
+            <Image
+              src={project.image}
+              alt={project.title}
+              className="object-cover"
+              fill
+              sizes="100%"
+            />
+          ) : (
+            <div className="text-sm text-gray-500">No image available</div>
+          )}
         </div>
 
         <div className="p-6 flex-1 flex flex-col">

@@ -62,7 +62,7 @@ export default function Header() {
           </div>
 
           <a
-            href="/Olabode Ayodele CV.pdf"
+            href="/eazycv.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden md:block"
@@ -100,11 +100,7 @@ export default function Header() {
               <a href="#contact" onClick={() => setIsOpen(false)}>
                 Contact
               </a>
-              <a
-                href="/Olabode Ayodele CV.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="/eazycv.pdf" target="_blank" rel="noopener noreferrer">
                 <Button className="bg-teal-600">Download Resume</Button>
               </a>
             </div>
