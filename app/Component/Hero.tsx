@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
-    <section className="pt-32 pb-32 px-6 max-w-5xl mx-auto text-center overflow-hidden">
+    <section className="py-32 px-6 max-w-5xl mx-auto text-center overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

@@ -13,12 +13,12 @@ h1, h2, h3, h4 {
 }
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #111111;     /* ← This is what your cards currently use */
+  background-color: #111111;     
   color: #f1f5f9;
 }
 
 .glass {
-  background: #111111;           /* Same as body now */
+  background: #111111;          
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.5);
 }

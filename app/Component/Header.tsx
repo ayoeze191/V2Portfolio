@@ -30,7 +30,7 @@ export default function Header() {
       >
         <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
           <div className="text-2xl font-bold tracking-tight text-white">
-            EazyCode
+            {"<Eazy />"}
           </div>
 
           {/* Desktop Navigation */}

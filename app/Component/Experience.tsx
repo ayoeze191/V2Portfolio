@@ -79,7 +79,7 @@ export default function Experience() {
 
         <div className="relative space-y-8">
           {/* Timeline line */}
-          <div className="absolute left-[19px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-teal-400 via-teal-500/30 to-transparent hidden md:block" />
+          <div className="absolute left-4.75 top-6 bottom-6 w-0.5 bg-linear-to-b from-teal-400 via-teal-500/30 to-transparent hidden md:block" />
 
           {experiences.map((exp, index) => (
             <motion.div
@@ -92,7 +92,7 @@ export default function Experience() {
             >
               {/* Timeline dot */}
               <div className="hidden md:flex flex-col items-center">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/20">
+                <div className="w-10 h-10 rounded-full bg-linear-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/20">
                   <Briefcase size={18} className="text-white" />
                 </div>
               </div>
