@@ -5,7 +5,7 @@ import Header from "./Component/Header";
 import Hero from "./Component/Hero";
 import Projects from "./Component/Projects";
 import Recommendations from "./Component/Recomendation";
-import TechStack from "./Component/TechStack";
+import TechStackPage from "./Component/TechStack2";
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
       <About />
       <Experience />
       <Projects />
-      <TechStack />
+      <TechStackPage />
       <Recommendations />
       <Contact />
       {/* Other sections will go here later */}
