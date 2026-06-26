@@ -10,6 +10,7 @@ import dogify from "./../assets/images/Projects/Dogify.png";
 import Mctchey from "./../assets/images/Projects/Mctechy.png";
 import matacare from "./../assets/images/Projects/matacare.png";
 import learnpally from "./../assets/images/Projects/learnpally.png";
+import UniLms from "./../assets/images/Projects/unilms.png";
 import Link from "next/link";
 export default function Projects() {
   const projects = [
@@ -58,6 +59,16 @@ export default function Projects() {
         "It's a comprehensive landing page for a tech bootcamp provider. Here is a breakdown of its main content and features, which you can use to describe your project..",
       tech: ["Next.js", "TypeScript", "Tailwind", "Prisma"],
       live: "https://mktechy.netlify.app/",
+      github: "",
+      status: "",
+    },
+    {
+      image: UniLms,
+      title: "UniLms",
+      description:
+        "University Learning Management System - Modern platform for course delivery, assignments, assessments, and student progress tracking with real-time collaboration",
+      tech: ["Next.js", "TypeScript", "Tailwind", "Prisma"],
+      live: "https://eazy-lmsfrontend.netlify.app/",
       github: "",
       status: "",
     },
