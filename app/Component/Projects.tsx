@@ -11,9 +11,20 @@ import Mctchey from "./../assets/images/Projects/Mctechy.png";
 import matacare from "./../assets/images/Projects/matacare.png";
 import learnpally from "./../assets/images/Projects/learnpally.png";
 import UniLms from "./../assets/images/Projects/unilms.png";
+import debsphere from "./../assets/images/Projects/debsphere.png";
 import Link from "next/link";
 export default function Projects() {
   const projects = [
+    {
+      image: debsphere,
+      title: "Debsphere Academy",
+      description:
+        "EducationDebSphere Academy is a modern Learning Management System (LMS) that enables individuals and organizations to create, manage, and deliver online courses. The platform provides secure authentication, course enrollment, progress tracking, certificate issuance, and role-based dashboards for students, instructors, and administrators. Built with scalability and user experience in mind, it includes features such as email verification, payment integration, and a responsive interface for seamless learning across devices.",
+      tech: ["Next", "Redis", "BullMq", "Prisma", "Node js", "POSTGRES"],
+      live: "https://www.debshphereacademy.com/",
+      github: "#",
+      Status: "Led the Team",
+    },
     {
       image: learnpally,
       title: "Learnpally Platform",
