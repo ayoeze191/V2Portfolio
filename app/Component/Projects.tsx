@@ -17,7 +17,7 @@ export default function Projects() {
       image: debsphere,
       title: "Debsphere Academy",
       description:
-        "EducationDebSphere Academy is a modern Learning Management System (LMS) that enables individuals and organizations to create, manage, and deliver online courses. The platform provides secure authentication, course enrollment, progress tracking, certificate issuance, and role-based dashboards for students, instructors, and administrators. Built with scalability and user experience in mind, it includes features such as email verification, payment integration, and a responsive interface for seamless learning across devices.",
+        "Led the development of scalable full-stack web applications using Node.js, Express.js, React, Next.js, TypeScript, MongoDB, PostgreSQL, Docker, Git, and REST APIs",
       tech: ["Next", "Redis", "BullMq", "Prisma", "Node js", "POSTGRES"],
       live: "https://www.debshphereacademy.com/",
       github: "#",
@@ -27,7 +27,7 @@ export default function Projects() {
       image: learnpally,
       title: "Learnpally Platform",
       description:
-        "Full-stack education platform with web and mobile apps. Built course management, analytics dashboard, and real-time features.",
+        "Collaborated with product managers and designers to build and improve LearnPally, delivering user-focused features and seamless experiences.",
       tech: [
         "React",
         "React Native",
