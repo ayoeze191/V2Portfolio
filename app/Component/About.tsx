@@ -35,9 +35,9 @@ export default function About() {
                 Hey there! 👋
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                I'm a Software Engineer with a strong foundation in both web and
-                mobile application development, passionate about building
-                scalable, user-focused digital experiences.
+                I&apos;m a Software Engineer with a strong foundation in both
+                web and mobile application development, passionate about
+                building scalable, user-focused digital experiences.
               </p>
             </motion.div>
 
