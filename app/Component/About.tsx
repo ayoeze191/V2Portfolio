@@ -96,11 +96,13 @@ export default function About() {
               experience.
             </p>
             <p className="text-gray-300 leading-relaxed text-sm">
-              Currently, I'm working with{" "}
-              <span className="text-teal-400">React, Next.js,</span> and{" "}
-              <span className="text-teal-400">React Native</span> to deliver
-              high-quality products. I'm always eager to learn new technologies
-              and tackle challenging problems.
+              Currently, I&apos;m working with{" "}
+              <span className="text-teal-400">
+                Node,PostgreSQL, React, Next.js,
+              </span>{" "}
+              and <span className="text-teal-400">React Native</span> to deliver
+              high-quality products. I&apos;m always eager to learn new
+              technologies and tackle challenging problems.
             </p>
             <div className="pt-3">
               <span className="inline-block bg-teal-500/10 border border-teal-500/20 rounded-full px-4 py-1.5 text-xs text-teal-300">
