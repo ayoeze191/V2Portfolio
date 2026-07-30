@@ -27,7 +27,7 @@ export default function Projects() {
       image: learnpally,
       title: "Learnpally Platform",
       description:
-        "Collaborated with product managers and designers to build and improve LearnPally, delivering user-focused features and seamless experiences.",
+        "I designed and developed scalable backend services using Node.js, Express.js, and MongoDB to power an e-learning platform. I built RESTful APIs for user authentication, course management, enrollments, and payment processing, integrated Paystack for secure transactions, and implemented background jobs for asynchronous tasks such as email notifications and video processing. I also optimized database queries, enforced role-based access control, and integrated analytics tools like PostHog to track user engagement and platform performance.",
       tech: [
         "React",
         "React Native",
