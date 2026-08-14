@@ -1,7 +1,9 @@
 "use client";
 
-import { motion, useInView, type Variants } from "framer-motion";
-import { useRef, useEffect, useState, type ElementType } from "react";
+import { useRef, type ElementType } from "react";
+import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/app/lib/gsap";
+import SectionHead from "./SectionHead";
+import { SplitReveal, Marquee } from "./Anim";
 import {
   SiReact,
   SiNextdotjs,
@@ -16,7 +18,6 @@ import {
   SiFirebase,
   SiVuedotjs,
   SiDjango,
-  SiFramer,
   SiThreedotjs,
   SiJavascript,
   SiRedux,
@@ -24,364 +25,161 @@ import {
   SiPrisma,
   SiRedis,
   SiVercel,
-  SiNetlify,
+  SiGreensock,
+  SiExpo,
 } from "react-icons/si";
 import { FaMobileAlt, FaPython } from "react-icons/fa";
 
-interface TechItem {
-  name: string;
-  icon: ElementType;
-}
+type Tech = { name: string; icon: ElementType };
 
-const techStacks: TechItem[] = [
-  { name: "React", icon: SiReact },
-  { name: "Next.js", icon: SiNextdotjs },
-  { name: "React Native", icon: FaMobileAlt },
-  { name: "TypeScript", icon: SiTypescript },
-  { name: "JavaScript", icon: SiJavascript },
-  { name: "Node.js", icon: SiNodedotjs },
-  { name: "Express", icon: SiExpress },
-  { name: "Python", icon: FaPython },
-  { name: "Django", icon: SiDjango },
-  { name: "Vue.js", icon: SiVuedotjs },
-  { name: "Redux", icon: SiRedux },
-  { name: "GraphQL", icon: SiGraphql },
-  { name: "Prisma", icon: SiPrisma },
-  { name: "Tailwind CSS", icon: SiTailwindcss },
-  { name: "MongoDB", icon: SiMongodb },
-  { name: "PostgreSQL", icon: SiPostgresql },
-  { name: "Redis", icon: SiRedis },
-  { name: "Firebase", icon: SiFirebase },
-  { name: "Docker", icon: SiDocker },
-  // { name: "AWS", icon: SiAmazon },
-  { name: "Git", icon: SiGit },
-  { name: "Framer Motion", icon: SiFramer },
-  { name: "Three.js", icon: SiThreedotjs },
-  { name: "Vercel", icon: SiVercel },
-  { name: "Netlify", icon: SiNetlify },
+/** Grouped the way dorisfaki.tech splits competence, numbered the way anthonyokeh.com does. */
+const GROUPS: { label: string; items: Tech[] }[] = [
+  {
+    label: "Frontend & Mobile",
+    items: [
+      { name: "React", icon: SiReact },
+      { name: "React Native", icon: FaMobileAlt },
+      { name: "Next.js", icon: SiNextdotjs },
+      { name: "TypeScript", icon: SiTypescript },
+      { name: "JavaScript", icon: SiJavascript },
+      { name: "Expo", icon: SiExpo },
+      { name: "Vue 3", icon: SiVuedotjs },
+      { name: "Redux", icon: SiRedux },
+      { name: "Tailwind", icon: SiTailwindcss },
+      { name: "GSAP", icon: SiGreensock },
+      { name: "Three.js", icon: SiThreedotjs },
+    ],
+  },
+  {
+    label: "Backend & Data",
+    items: [
+      { name: "Node.js", icon: SiNodedotjs },
+      { name: "Express", icon: SiExpress },
+      { name: "PostgreSQL", icon: SiPostgresql },
+      { name: "MongoDB", icon: SiMongodb },
+      { name: "Prisma", icon: SiPrisma },
+      { name: "Redis", icon: SiRedis },
+      { name: "GraphQL", icon: SiGraphql },
+      { name: "Python", icon: FaPython },
+      { name: "Django", icon: SiDjango },
+    ],
+  },
+  {
+    label: "Platform & Tooling",
+    items: [
+      { name: "Docker", icon: SiDocker },
+      { name: "Git", icon: SiGit },
+      { name: "Firebase", icon: SiFirebase },
+      { name: "Vercel", icon: SiVercel },
+    ],
+  },
 ];
 
-// Orbiting Icon Component - circles around the card!
-function OrbitingIcon({
-  icon: Icon,
-  delay,
-  duration,
-  radius,
-  startAngle,
-  size = "w-8 h-8 md:w-10 md:h-10",
-}: {
-  icon: ElementType;
-  delay: number;
-  duration: number;
-  radius: number;
-  startAngle: number;
-  size?: string;
-}) {
-  const [angle, setAngle] = useState(startAngle);
+/**
+ * Numbering runs continuously across groups (01 … 24). Precomputed rather than
+ * incremented during render — a render-time counter is not idempotent.
+ */
+const GROUP_OFFSETS = GROUPS.reduce<number[]>((acc, group, i) => {
+  acc.push(i === 0 ? 0 : acc[i - 1] + GROUPS[i - 1].items.length);
+  return acc;
+}, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAngle((prev) => prev + 1);
-    }, duration * 10);
-    return () => clearInterval(interval);
-  }, [duration]);
+const TOTAL_TOOLS = GROUPS.reduce((n, g) => n + g.items.length, 0);
 
-  const x = Math.cos((angle * Math.PI) / 180) * radius;
-  const y = Math.sin((angle * Math.PI) / 180) * radius;
+const MARQUEE_WORDS = [
+  "React Native",
+  "Node.js",
+  "TypeScript",
+  "PostgreSQL",
+  "Next.js",
+  "Express",
+  "Prisma",
+  "Redis",
+];
 
-  return (
-    <motion.div
-      className={`absolute ${size} text-gray-500/40 hover:text-[#4A9B8E]/60 transition-colors duration-300`}
-      style={{
-        left: `calc(50% + ${x}px)`,
-        top: `calc(50% + ${y}px)`,
-        transform: "translate(-50%, -50%)",
-      }}
-      animate={{
-        opacity: [0.2, 0.5, 0.2],
-      }}
-      transition={{
-        duration: 3,
-        delay,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-    >
-      <Icon className="w-full h-full" />
-    </motion.div>
-  );
-}
+export default function TechStack() {
+  const root = useRef<HTMLDivElement>(null);
 
-export default function TechStackPage() {
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 800,
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) {
+        gsap.set("[data-cell]", { opacity: 1 });
+        return;
+      }
+
+      gsap.set("[data-cell]", { opacity: 1 });
+
+      // Cells pop in per-group, so each block reads as its own unit.
+      gsap.utils.toArray<HTMLElement>("[data-group]").forEach((group) => {
+        gsap.from(group.querySelectorAll("[data-cell]"), {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.55,
+          ease: EASE,
+          stagger: { each: 0.035, from: "start" },
+          scrollTrigger: { trigger: group, start: "top 88%", once: true },
+        });
+      });
+    },
+    { scope: root },
   );
 
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Responsive radius based on screen size
-  const getRadius = () => {
-    if (windowWidth < 640) return 140;
-    if (windowWidth < 768) return 180;
-    if (windowWidth < 1024) return 220;
-    return 280;
-  };
-
-  const radius = getRadius();
-
-  // 12 icons orbiting around the card
-  const orbitingIcons = [
-    {
-      icon: SiReact,
-      delay: 0,
-      duration: 20,
-      startAngle: 0,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-    {
-      icon: SiNextdotjs,
-      delay: 1,
-      duration: 25,
-      startAngle: 30,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-    {
-      icon: SiNodedotjs,
-      delay: 2,
-      duration: 18,
-      startAngle: 60,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-    {
-      icon: SiTypescript,
-      delay: 0.5,
-      duration: 22,
-      startAngle: 90,
-      radius,
-      size: "w-7 h-7 md:w-9 md:h-9",
-    },
-    {
-      icon: SiDocker,
-      delay: 1.5,
-      duration: 28,
-      startAngle: 120,
-      radius,
-      size: "w-9 h-9 md:w-11 md:h-11",
-    },
-    {
-      icon: SiMongodb,
-      delay: 2.5,
-      duration: 24,
-      startAngle: 150,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-    {
-      icon: SiTailwindcss,
-      delay: 0.8,
-      duration: 30,
-      startAngle: 180,
-      radius,
-      size: "w-7 h-7 md:w-9 md:h-9",
-    },
-    {
-      icon: SiGit,
-      delay: 1.8,
-      duration: 26,
-      startAngle: 210,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-    {
-      icon: SiFirebase,
-      delay: 3,
-      duration: 21,
-      startAngle: 240,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-    {
-      icon: SiVuedotjs,
-      delay: 0.3,
-      duration: 32,
-      startAngle: 270,
-      radius,
-      size: "w-7 h-7 md:w-9 md:h-9",
-    },
-    {
-      icon: SiPostgresql,
-      delay: 2.2,
-      duration: 27,
-      startAngle: 300,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-    {
-      icon: FaMobileAlt,
-      delay: 1.2,
-      duration: 23,
-      startAngle: 330,
-      radius,
-      size: "w-8 h-8 md:w-10 md:h-10",
-    },
-  ];
-
-  const firstRow = techStacks.slice(0, 14);
-  const secondRow = techStacks.slice(14);
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.03,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const },
-    },
-  };
-
   return (
-    <main className="min-h-screen bg-[#0A0A0A] py-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Tech Stack
-            <br />
-            <span className="text-[#4A9B8E]">I&apos;ve got you covered</span>
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            From frontend frameworks to backend systems, databases to DevOps
-            tools.
-          </p>
-        </motion.div>
+    <section id="stack" className="section">
+      <div className="shell" ref={root}>
+        <SectionHead index="04" title="Stack" aside={`${TOTAL_TOOLS} tools`} />
 
-        {/* Tech Grid - Exact Render.com style */}
-        <div ref={sectionRef} className="space-y-4">
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3"
-          >
-            {firstRow.map((tech) => (
-              <motion.div
-                key={tech.name}
-                variants={itemVariants}
-                whileHover={{ scale: 1.02, transition: { duration: 0.15 } }}
-                className="group relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#4A9B8E]/20 to-[#4A9B8E]/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-                <div className="relative bg-[#111111] border border-[#222222] hover:border-[#4A9B8E]/50 rounded-xl p-5 flex items-center justify-center transition-all duration-200 cursor-pointer min-h-[90px]">
-                  <tech.icon className="w-8 h-8 text-gray-300 group-hover:text-white transition-colors duration-200" />
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+        <SplitReveal as="h2" className="display-md max-w-[16ch] mb-4">
+          The tools I reach for first.
+        </SplitReveal>
+        <p className="lede mb-14">
+          Deep in the React and Node ecosystem, comfortable everywhere else.
+          Nothing here is on the list because it looked good on a CV.
+        </p>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3"
-          >
-            {secondRow.map((tech) => (
-              <motion.div
-                key={tech.name}
-                variants={itemVariants}
-                whileHover={{ scale: 1.02, transition: { duration: 0.15 } }}
-                className="group relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#4A9B8E]/20 to-[#4A9B8E]/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
-                <div className="relative bg-[#111111] border border-[#222222] hover:border-[#4A9B8E]/50 rounded-xl p-5 flex items-center justify-center transition-all duration-200 cursor-pointer min-h-[90px]">
-                  <tech.icon className="w-8 h-8 text-gray-300 group-hover:text-white transition-colors duration-200" />
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
+        <div className="space-y-12">
+          {GROUPS.map((group, gi) => (
+            <div key={group.label} data-group>
+              <div className="flex items-baseline gap-4 mb-5">
+                <span className="mono-accent">{group.label}</span>
+                <span className="flex-1 h-px bg-[var(--line)]" />
+                <span className="mono">{group.items.length}</span>
+              </div>
 
-        {/* CTA Section with ORBITING Icons - Exactly like Render.com */}
-        <div className="relative mt-32 mb-12">
-          {/* Orbiting Icons Container */}
-          <div className="absolute inset-0 pointer-events-none overflow-visible">
-            {orbitingIcons.map((icon, idx) => (
-              <OrbitingIcon key={idx} {...icon} radius={radius} />
-            ))}
-          </div>
-
-          {/* Main CTA Card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
-            className="relative z-10"
-          >
-            <div className="relative group">
-              {/* Animated gradient border */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4A9B8E] to-[#3D8276] rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500" />
-
-              <div className="relative bg-[#111111] border border-[#222222] rounded-2xl p-12 text-center">
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.3, type: "spring" }}
-                >
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                    Come and build with me
-                  </h3>
-                  <p className="text-gray-400 mb-6 max-w-md mx-auto text-sm md:text-base">
-                    Let&apos;s create something amazing together.
-                  </p>
-                  <a
-                    href="#contact"
-                    className="group/btn inline-flex items-center gap-2 bg-[#4A9B8E] hover:bg-[#3D8276] text-white font-medium px-6 md:px-8 py-3 md:py-4 rounded-lg transition-all duration-200 shadow-lg shadow-[#4A9B8E]/20 hover:shadow-xl hover:shadow-[#4A9B8E]/30"
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+                {group.items.map((tech, ti) => (
+                  <div
+                    key={tech.name}
+                    data-cell
+                    className="stack-cell"
+                    style={{ opacity: 0 }}
                   >
-                    Start building
-                    <svg
-                      className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 7l5 5m0 0l-5 5m5-5H6"
-                      />
-                    </svg>
-                  </a>
-                </motion.div>
+                    <span className="num">
+                      {String(GROUP_OFFSETS[gi] + ti + 1).padStart(2, "0")}
+                    </span>
+                    <tech.icon className="w-6 h-6 self-start" />
+                    <span className="label">{tech.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
-          </motion.div>
+          ))}
         </div>
       </div>
-    </main>
+
+      {/* Full-bleed marquee — the one piece of pure motion in this section */}
+      <div className="mt-16 border-y border-[var(--line)] py-6">
+        <Marquee speed={34}>
+          {MARQUEE_WORDS.map((word, i) => (
+            <span
+              key={word}
+              className={`marquee-item ${i % 2 === 1 ? "solid" : ""}`}
+            >
+              {word} <span className="text-[var(--accent)]">·</span>
+            </span>
+          ))}
+        </Marquee>
+      </div>
+    </section>
   );
 }

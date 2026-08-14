@@ -5,20 +5,20 @@ import Header from "./Component/Header";
 import Hero from "./Component/Hero";
 import Projects from "./Component/Projects";
 import Recommendations from "./Component/Recomendation";
-import TechStackPage from "./Component/TechStack2";
+import TechStack from "./Component/TechStack2";
 
 export default function Home() {
   return (
-    <main className="min-h-screen   text-white">
+    <main className="min-h-screen">
       <Header />
       <Hero />
+      {/* Section numbering below matches the nav indices in Header.tsx */}
       <About />
       <Experience />
       <Projects />
-      <TechStackPage />
+      <TechStack />
       <Recommendations />
       <Contact />
-      {/* Other sections will go here later */}
     </main>
   );
 }

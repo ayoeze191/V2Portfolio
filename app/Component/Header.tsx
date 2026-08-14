@@ -1,112 +1,221 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
-import { useState, useEffect } from "react";
-import ScrollProgress from "./ScrollProgress";
+import { useEffect, useRef, useState } from "react";
+import { gsap, useGSAP, ScrollTrigger, EASE_EXPO } from "@/app/lib/gsap";
 
-export default function Header() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+const NAV = [
+  { id: "#about", index: "01", label: "About" },
+  { id: "#experience", index: "02", label: "Experience" },
+  { id: "#work", index: "03", label: "Work" },
+  { id: "#stack", index: "04", label: "Stack" },
+  { id: "#words", index: "05", label: "Words" },
+  { id: "#contact", index: "06", label: "Contact" },
+];
+
+/** Live Lagos time — the "location + timezone" cue from dorisfaki.tech. */
+function useLagosTime() {
+  const [time, setTime] = useState<string>("");
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    const tick = () =>
+      setTime(
+        new Intl.DateTimeFormat("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          timeZone: "Africa/Lagos",
+        }).format(new Date()),
+      );
+
+    tick();
+    const id = setInterval(tick, 1000 * 30);
+    return () => clearInterval(id);
+  }, []);
+
+  return time;
+}
+
+export default function Header() {
+  const [open, setOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const time = useLagosTime();
+
+  /* Scroll progress rail + backdrop that only appears once you leave the hero. */
+  useGSAP(() => {
+    gsap.to(progressRef.current, {
+      scaleX: 1,
+      ease: "none",
+      scrollTrigger: {
+        trigger: document.documentElement,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.3,
+      },
+    });
+
+    gsap.to(navRef.current, {
+      backgroundColor: "rgba(8, 9, 10, 0.82)",
+      backdropFilter: "blur(14px)",
+      borderBottomColor: "rgba(255,255,255,0.11)",
+      duration: 0.4,
+      scrollTrigger: {
+        trigger: document.documentElement,
+        start: "top+=80 top",
+        toggleActions: "play none none reverse",
+      },
+    });
+  }, []);
+
+  /* Fullscreen mobile menu: panel wipes down, links stagger up behind it. */
+  useGSAP(
+    () => {
+      const menu = menuRef.current;
+      if (!menu) return;
+
+      if (open) {
+        gsap.set(menu, { display: "flex" });
+        gsap
+          .timeline()
+          .fromTo(
+            menu,
+            { clipPath: "inset(0 0 100% 0)" },
+            { clipPath: "inset(0 0 0% 0)", duration: 0.7, ease: EASE_EXPO },
+          )
+          .from(
+            menu.querySelectorAll("[data-menu-item]"),
+            { yPercent: 120, opacity: 0, duration: 0.6, stagger: 0.06, ease: EASE_EXPO },
+            "-=0.35",
+          );
+      } else {
+        gsap.to(menu, {
+          clipPath: "inset(0 0 100% 0)",
+          duration: 0.45,
+          ease: "power3.inOut",
+          onComplete: () => gsap.set(menu, { display: "none" }),
+        });
+      }
+    },
+    { dependencies: [open], scope: menuRef },
+  );
+
+  // Lock body scroll while the overlay is open.
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  }, [open]);
+
+  // Anchor navigation changes the document position; keep triggers in sync.
+  useEffect(() => {
+    ScrollTrigger.refresh();
   }, []);
 
   return (
     <>
-      <ScrollProgress />
-
       <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-black/80 backdrop-blur-xl shadow-lg shadow-black/50 border-b border-white/10"
-            : "bg-transparent"
-        }`}
+        ref={navRef}
+        className="fixed top-0 inset-x-0 z-50 border-b border-transparent"
+        style={{ backgroundColor: "rgba(8,9,10,0)" }}
       >
-        <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
-          <div className="text-2xl font-bold tracking-tight text-white">
-            {"<Eazy />"}
+        <div className="shell flex items-center justify-between py-4">
+          <a href="#hero" className="flex items-baseline gap-2 group">
+            <span className="font-[family-name:var(--font-display)] text-base font-bold tracking-tight uppercase">
+              Ezekiel Olabode
+            </span>
+            <span className="mono-accent hidden sm:inline">
+              [Software Engineer]
+            </span>
+          </a>
+
+          <div className="hidden lg:flex items-center gap-7">
+            {NAV.map((item) => (
+              <a
+                key={item.id}
+                href={item.id}
+                className="group flex items-baseline gap-1.5 mono hover:text-[var(--fg)] transition-colors"
+              >
+                <span className="text-[var(--accent)] opacity-60 group-hover:opacity-100 transition-opacity">
+                  {item.index}
+                </span>
+                <span>{item.label}</span>
+              </a>
+            ))}
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8 text-gray-300">
-            <a href="#about" className="hover:text-teal-400 transition-colors">
-              About
-            </a>
+          <div className="flex items-center gap-4">
+            <span className="mono hidden md:inline tabular-nums">
+              Lagos {time} WAT
+            </span>
             <a
-              href="#projects"
-              className="hover:text-teal-400 transition-colors"
+              href="/eazycv.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-arrow hidden sm:inline-flex"
             >
-              Projects
+              Resume <span className="arrow">↗</span>
             </a>
-            <a
-              href="#experience"
-              className="hover:text-teal-400 transition-colors"
-            >
-              Experience
-            </a>
-            <a href="#tech" className="hover:text-teal-400 transition-colors">
-              Tech Stack
-            </a>
-            <a
-              href="#contact"
-              className="hover:text-teal-400 transition-colors"
-            >
-              Contact
-            </a>
-          </div>
 
+            <button
+              onClick={() => setOpen((v) => !v)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              className="lg:hidden mono text-[var(--fg)] px-2 py-1 border border-[var(--line)] z-50 relative"
+            >
+              {open ? "Close" : "Menu"}
+            </button>
+          </div>
+        </div>
+
+        {/* Scroll progress rail */}
+        <div
+          ref={progressRef}
+          className="h-px bg-[var(--accent)] origin-left"
+          style={{ transform: "scaleX(0)" }}
+        />
+      </nav>
+
+      {/* Fullscreen mobile overlay */}
+      <div
+        ref={menuRef}
+        className="fixed inset-0 z-40 bg-[var(--bg)] flex-col justify-center px-[var(--gutter)] lg:hidden"
+        style={{ display: "none", clipPath: "inset(0 0 100% 0)" }}
+      >
+        <div className="flex flex-col gap-2">
+          {NAV.map((item) => (
+            <div key={item.id} className="overflow-hidden">
+              <a
+                data-menu-item
+                href={item.id}
+                onClick={() => setOpen(false)}
+                className="flex items-baseline gap-4 py-1.5 group"
+              >
+                <span className="mono-accent">{item.index}</span>
+                <span className="display-md group-hover:text-[var(--accent)] transition-colors">
+                  {item.label}
+                </span>
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col gap-3">
           <a
+            data-menu-item
             href="/eazycv.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:block"
+            className="link-arrow self-start"
           >
-            <Button className="bg-teal-600 hover:bg-teal-500 text-white">
-              <Download className="mr-2 h-4 w-4" /> Resume
-            </Button>
+            Resume <span className="arrow">↗</span>
           </a>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white text-2xl"
-          >
-            ☰
-          </button>
+          <span data-menu-item className="mono">
+            Lagos, Nigeria · {time} WAT
+          </span>
         </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden bg-[#111111] border-t border-white/10 py-6">
-            <div className="flex flex-col items-center gap-6 text-lg text-gray-300">
-              <a href="#about" onClick={() => setIsOpen(false)}>
-                About
-              </a>
-              <a href="#projects" onClick={() => setIsOpen(false)}>
-                Projects
-              </a>
-              <a href="#experience" onClick={() => setIsOpen(false)}>
-                Experience
-              </a>
-              <a href="#tech" onClick={() => setIsOpen(false)}>
-                Tech Stack
-              </a>
-              <a href="#contact" onClick={() => setIsOpen(false)}>
-                Contact
-              </a>
-              <a href="/eazycv.pdf" target="_blank" rel="noopener noreferrer">
-                <Button className="bg-teal-600">Download Resume</Button>
-              </a>
-            </div>
-          </div>
-        )}
-      </nav>
+      </div>
     </>
   );
 }

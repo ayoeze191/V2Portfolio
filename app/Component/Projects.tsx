@@ -1,186 +1,274 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { FaGithub } from "react-icons/fa";
-import Image from "next/image";
-import ekopages from "./../assets/images/Projects/ekopages.png";
-import Mctchey from "./../assets/images/Projects/Mctechy.png";
-import learnpally from "./../assets/images/Projects/learnpally.png";
-import UniLms from "./../assets/images/Projects/unilms.png";
-import debsphere from "./../assets/images/Projects/debsphere.png";
+import { useRef, useState } from "react";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/app/lib/gsap";
+import SectionHead from "./SectionHead";
+import { SplitReveal } from "./Anim";
+
+import debsphere from "./../assets/images/Projects/debsphere.png";
+import learnpally from "./../assets/images/Projects/learnpally.png";
+import ekopages from "./../assets/images/Projects/ekopages.png";
+import mctechy from "./../assets/images/Projects/Mctechy.png";
+import unilms from "./../assets/images/Projects/unilms.png";
+import shibayc from "./../assets/images/Projects/shibayc.png";
+
+type Work = {
+  title: string;
+  role: string;
+  year: string;
+  summary: string;
+  tech: string[];
+  live?: string;
+  image?: StaticImageData;
+};
+
+const WORK: Work[] = [
+  {
+    title: "Debsphere Academy",
+    role: "Tech Lead",
+    year: "2025",
+    summary:
+      "Led the team building a full-stack learning platform — queue-backed background jobs, Prisma data layer, and a Next.js frontend.",
+    tech: ["Next.js", "Node.js", "Prisma", "PostgreSQL", "Redis", "BullMQ"],
+    live: "https://www.debshphereacademy.com/",
+    image: debsphere,
+  },
+  {
+    title: "Learnpally",
+    role: "Full-Stack Engineer",
+    year: "2024",
+    summary:
+      "E-learning platform across web and mobile. Course management, Paystack payments, background jobs for email and video processing, and PostHog analytics.",
+    tech: ["React", "React Native", "Node.js", "Express", "MongoDB", "Paystack"],
+    live: "https://learn.learnpally.com",
+    image: learnpally,
+  },
+  {
+    title: "RentAnything",
+    role: "Full-Stack Developer",
+    year: "2024",
+    summary:
+      "Rental marketplace with a custom Vue 3 SSR pipeline, full booking and pricing workflows, and Google Maps location search.",
+    tech: ["Vue 3", "Vite SSR", "Node.js", "Google Maps API"],
+    live: "https://rentanything.io",
+  },
+  {
+    title: "EkoPages",
+    role: "Frontend Developer",
+    year: "2023",
+    summary:
+      "Educational platform teaching African children about the SDGs through illustrated stories, courses, and blended learning programmes.",
+    tech: ["Next.js", "TypeScript", "Django", "Tailwind"],
+    live: "https://ekopages.com",
+    image: ekopages,
+  },
+  {
+    title: "UniLMS",
+    role: "Full-Stack Developer",
+    year: "2024",
+    summary:
+      "University learning management system covering course delivery, assignments, assessments, and student progress tracking.",
+    tech: ["Next.js", "TypeScript", "Prisma", "Tailwind"],
+    live: "https://eazy-lmsfrontend.netlify.app/",
+    image: unilms,
+  },
+  {
+    title: "McTechy",
+    role: "Frontend Developer",
+    year: "2023",
+    summary:
+      "Conversion-focused landing site for a tech bootcamp — course catalogue, graduate stories, and lead capture.",
+    tech: ["React", "Tailwind", "Framer Motion"],
+    live: "https://mktechy.netlify.app/",
+    image: mctechy,
+  },
+  {
+    title: "ShibaYC",
+    role: "Frontend Developer",
+    year: "2022",
+    summary:
+      "Web3 collection landing experience with minting flow and animated reveal sequence.",
+    tech: ["React", "Web3", "CSS"],
+    image: shibayc,
+  },
+];
+
 export default function Projects() {
-  const projects = [
-    {
-      image: debsphere,
-      title: "Debsphere Academy",
-      description:
-        "Led the development of scalable full-stack web applications using Node.js, Express.js, React, Next.js, TypeScript, MongoDB, PostgreSQL, Docker, Git, and REST APIs",
-      tech: ["Next", "Redis", "BullMq", "Prisma", "Node js", "POSTGRES"],
-      live: "https://www.debshphereacademy.com/",
-      github: "#",
-      Status: "Led the Team",
+  const root = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState<number | null>(null);
+
+  /* Cursor-tracking preview: quickTo keeps it buttery without a listener storm. */
+  useGSAP(
+    () => {
+      const preview = previewRef.current;
+      if (!preview || prefersReducedMotion()) return;
+
+      // Only meaningful for real pointers — skip entirely on touch.
+      if (!window.matchMedia("(hover: hover)").matches) return;
+
+      const xTo = gsap.quickTo(preview, "x", { duration: 0.55, ease: "power3" });
+      const yTo = gsap.quickTo(preview, "y", { duration: 0.55, ease: "power3" });
+
+      const onMove = (e: MouseEvent) => {
+        // Offset so the panel sits beside the cursor, not under it.
+        xTo(e.clientX + 28);
+        yTo(e.clientY - 100);
+      };
+
+      const el = root.current;
+      el?.addEventListener("mousemove", onMove);
+      return () => el?.removeEventListener("mousemove", onMove);
     },
-    {
-      image: learnpally,
-      title: "Learnpally Platform",
-      description:
-        "I designed and developed scalable backend services using Node.js, Express.js, and MongoDB to power an e-learning platform. I built RESTful APIs for user authentication, course management, enrollments, and payment processing, integrated Paystack for secure transactions, and implemented background jobs for asynchronous tasks such as email notifications and video processing. I also optimized database queries, enforced role-based access control, and integrated analytics tools like PostHog to track user engagement and platform performance.",
-      tech: [
-        "React",
-        "React Native",
-        "Node.js",
-        "Express",
-        "Firebase",
-        "Mixpanel",
-      ],
-      live: "https://learn.learnpally.com",
-      github: "#",
-      status: "Featured",
+    { scope: root },
+  );
+
+  /* Fade the preview in and out as rows are entered and left. */
+  useGSAP(
+    () => {
+      const preview = previewRef.current;
+      if (!preview || prefersReducedMotion()) return;
+
+      gsap.to(preview, {
+        opacity: active !== null && WORK[active]?.image ? 1 : 0,
+        scale: active !== null ? 1 : 0.92,
+        duration: 0.45,
+        ease: EASE,
+      });
     },
-    {
-      image: "",
-      title: "RentAnything",
-      description:
-        "Complete rental marketplace with SSR, advanced search, booking system, and Google Maps integration.",
-      tech: ["Vue 3", "Vite", "Node.js", "Google Maps API"],
-      live: "https://rentanything.io",
-      github: "#",
-      status: "Featured",
+    { dependencies: [active] },
+  );
+
+  /* Row-by-row entrance. */
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) {
+        gsap.set("[data-work-row]", { opacity: 1 });
+        return;
+      }
+      gsap.set("[data-work-row]", { opacity: 1 });
+      gsap.from("[data-work-row]", {
+        opacity: 0,
+        y: 44,
+        duration: 0.85,
+        ease: EASE,
+        stagger: 0.07,
+        scrollTrigger: { trigger: "[data-work-list]", start: "top 82%", once: true },
+      });
     },
-    // Add more projects here
-    {
-      image: ekopages,
-      title: "ekopages",
-      description:
-        "s an educational platform that uses SDG-themed children's literature, stories, courses, and programs to teach African children about environmental, gender, and sustainability issues affecting them .",
-      tech: ["Next.js", "TypeScript", "Tailwind", "Django"],
-      live: "https://ekopages.com",
-      github: "",
-      status: "Featured",
-    },
-    {
-      image: Mctchey,
-      title: "Mktechy",
-      description:
-        "It's a comprehensive landing page for a tech bootcamp provider. Here is a breakdown of its main content and features, which you can use to describe your project..",
-      tech: ["Next.js", "TypeScript", "Tailwind", "Prisma"],
-      live: "https://mktechy.netlify.app/",
-      github: "",
-      status: "",
-    },
-    {
-      image: UniLms,
-      title: "UniLms",
-      description:
-        "University Learning Management System - Modern platform for course delivery, assignments, assessments, and student progress tracking with real-time collaboration",
-      tech: ["Next.js", "TypeScript", "Tailwind", "Prisma"],
-      live: "https://eazy-lmsfrontend.netlify.app/",
-      github: "",
-      status: "",
-    },
-  ];
+    { scope: root },
+  );
 
   return (
-    <section id="projects" className="py-20 px-6 bg-[#0a0a0a]">
-      <div className="max-w-5xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl font-bold mb-4 text-center"
-        >
-          Featured Projects
-        </motion.h2>
-        <p className="text-center text-gray-400 mb-12 text-lg">
-          Some of the projects I&apos;ve worked on recently
-        </p>
+    <section id="work" className="section">
+      <div className="shell" ref={root}>
+        <SectionHead index="03" title="Selected Work" aside="2022 — 2025" />
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 80 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              whileHover={{ y: -12, transition: { duration: 0.4 } }}
-              className="glass border border-white/10 rounded-3xl overflow-hidden group"
-            >
-              {/* Project Image / Placeholder */}
-              <div className="h-64 bg-gradient-to-br from-teal-500/20 via-purple-500/10 to-[#050505] flex items-center justify-center relative">
-                <div className="text-6xl opacity-40 group-hover:opacity-60 transition-opacity">
-                  {project.image !== "" ? (
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : project.title.includes("Rent") ? (
-                    "🏠"
-                  ) : (
-                    "🚀"
-                  )}
+        <SplitReveal as="h2" className="display-md max-w-[15ch] mb-12">
+          Things I&apos;ve shipped and still stand behind.
+        </SplitReveal>
+
+        <div data-work-list className="border-t border-[var(--line)]">
+          {WORK.map((item, i) => {
+            const Row = (
+              <div className="grid grid-cols-12 gap-4 items-baseline">
+                <span className="row-index col-span-2 md:col-span-1">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                <div className="col-span-10 md:col-span-4 row-title">
+                  <h3 className="text-xl md:text-3xl font-semibold tracking-tight">
+                    {item.title}
+                  </h3>
+                  <p className="mono mt-1">{item.role}</p>
                 </div>
-                {project.status && (
-                  <div className="absolute top-4 right-4 bg-teal-500 text-black text-xs font-semibold px-3 py-1 rounded-full">
-                    {project.status}
-                  </div>
-                )}
-              </div>
 
-              <div className="p-8">
-                <h3 className="text-2xl font-semibold mb-3">{project.title}</h3>
-                <p className="text-gray-400 mb-6 leading-relaxed">
-                  {project.description}
+                <p className="col-span-12 md:col-span-4 text-sm leading-relaxed mt-3 md:mt-0">
+                  {item.summary}
                 </p>
 
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {project.tech.map((tech, i) => (
-                    <span
-                      key={i}
-                      className="text-xs bg-white/5 px-4 py-1.5 rounded-full text-gray-300"
-                    >
-                      {tech}
+                <div className="col-span-8 md:col-span-2 flex flex-wrap gap-1.5 mt-3 md:mt-0">
+                  {item.tech.slice(0, 3).map((t) => (
+                    <span key={t} className="chip">
+                      {t}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex gap-4">
-                  <Button asChild variant="default" className="flex-1">
-                    <a
-                      href={project.live}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Live Demo <ExternalLink className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
-                  <Button asChild variant="outline" className="flex-1">
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Code
-                      <FaGithub className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
-                </div>
+                <span className="mono col-span-4 md:col-span-1 text-right mt-3 md:mt-0">
+                  {item.live ? "↗" : ""} {item.year}
+                </span>
+
+                {/* Touch devices get an inline thumbnail instead of the hover preview. */}
+                {item.image && (
+                  <div className="col-span-12 mt-4 md:hidden relative aspect-[3/2] border border-[var(--line)] overflow-hidden">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
               </div>
-            </motion.div>
-          ))}
+            );
+
+            return (
+              <div
+                key={item.title}
+                data-work-row
+                className="row"
+                style={{ opacity: 0 }}
+                onMouseEnter={() => setActive(i)}
+                onMouseLeave={() => setActive(null)}
+              >
+                {item.live ? (
+                  <a
+                    href={item.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    {Row}
+                  </a>
+                ) : (
+                  Row
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        <div className="text-center mt-12">
-          <Link href="/projects" className="cursor-pointer">
-            <Button variant="outline" size="lg">
-              View All Projects
-            </Button>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
+          <Link href="/projects" className="link-arrow">
+            View the full archive <span className="arrow">→</span>
           </Link>
+          <span className="mono hidden md:inline">Hover a row to preview</span>
         </div>
+      </div>
+
+      {/* Floating cursor preview — desktop only, driven by gsap.quickTo */}
+      <div
+        ref={previewRef}
+        className="row-preview hidden md:block"
+        aria-hidden="true"
+      >
+        {WORK.map((item, i) =>
+          item.image ? (
+            <Image
+              key={item.title}
+              src={item.image}
+              alt=""
+              fill
+              sizes="300px"
+              className="object-cover transition-opacity duration-300"
+              style={{ opacity: active === i ? 1 : 0 }}
+            />
+          ) : null,
+        )}
       </div>
     </section>
   );

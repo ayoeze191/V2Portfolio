@@ -1,202 +1,165 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { useState, type FormEvent } from "react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
-import { Mail, MapPin, Phone, Send, Clock } from "lucide-react";
-import { useState } from "react";
-import React from "react";
-export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+import SectionHead from "./SectionHead";
+import { SplitReveal, FadeUp } from "./Anim";
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+const EMAIL = "ayoeze191@gmail.com";
+
+const SOCIALS = [
+  { icon: FaGithub, label: "GitHub", href: "https://github.com/ayoeze191" },
+  {
+    icon: FaLinkedin,
+    label: "LinkedIn",
+    href: "https://linkedin.com/in/ayoeze191",
+  },
+  {
+    icon: FaTwitter,
+    label: "Twitter",
+    href: "https://twitter.com/olabodeezekie11",
+  },
+];
+
+export default function Contact() {
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+
+  /**
+   * No backend on this site, so the form composes a prefilled email in the
+   * visitor's own client rather than pretending to submit somewhere.
+   * Swap this for a POST to an API route if you add one later.
+   */
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+    const subject = encodeURIComponent(`Portfolio enquiry from ${form.name}`);
+    const body = encodeURIComponent(
+      `${form.message}\n\n—\n${form.name}\n${form.email}`,
+    );
+    window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
   };
 
   return (
-    <section id="contact" className="py-20 px-6 bg-[#0a0a0a]">
-      <div className="max-w-6xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl font-bold mb-6 text-center"
-        >
-          Let&apos;s Work Together
-        </motion.h2>
+    <section id="contact" className="section">
+      <div className="shell">
+        <SectionHead index="06" title="Contact" aside="Open to work" />
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="text-xl text-gray-400 mb-16 text-center max-w-2xl mx-auto"
-        >
-          I&apos;m currently open to new opportunities, exciting projects, and
-          meaningful conversations in tech.
-        </motion.p>
+        <SplitReveal as="h2" className="display mb-10">
+          Let&apos;s build something
+        </SplitReveal>
 
-        <div className="grid md:grid-cols-2 gap-10">
-          {/* Left Side - Contact Info Cards */}
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              {[
-                {
-                  icon: Mail,
-                  label: "Email",
-                  value: "ayoeze191@gmail.com",
-                  action: "mailto:ayoeze191@gmail.com",
-                },
-                {
-                  icon: MapPin,
-                  label: "Location",
-                  value: "Lagos, Nigeria",
-                  action: undefined,
-                },
-                {
-                  icon: Phone,
-                  label: "Phone",
-                  value: "+234 812 345 6789",
-                  action: "tel:+2348123456789",
-                },
-                {
-                  icon: Clock,
-                  label: "Response Time",
-                  value: "Within 24 hours",
-                  action: undefined,
-                },
-              ].map((item, index) => (
-                <motion.a
-                  key={index}
-                  href={item.action}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ x: 8, scale: 1.02 }}
-                  className="glass border border-white/10 rounded-2xl p-5 flex items-center gap-5 hover:border-teal-400/40 transition-all group cursor-pointer block"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-teal-500/10 flex items-center justify-center group-hover:bg-teal-500/20 transition">
-                    <item.icon className="text-teal-400" size={24} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">{item.label}</p>
-                    <p className="font-medium text-white">{item.value}</p>
-                  </div>
-                </motion.a>
-              ))}
-            </motion.div>
-
-            {/* Social Links */}
-            <div className="flex gap-4 pt-4">
-              {[
-                {
-                  icon: FaGithub,
-                  link: "https://github.com/ayoeze191",
-                  label: "GitHub",
-                },
-                {
-                  icon: FaLinkedin,
-                  link: "https://linkedin.com/in/ayoeze191",
-                  label: "LinkedIn",
-                },
-                {
-                  icon: FaTwitter,
-                  link: "https://twitter.com/olabodeezekie11",
-                  label: "Twitter",
-                },
-              ].map((social, i) => (
-                <motion.a
-                  key={i}
-                  href={social.link}
-                  target="_blank"
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + i * 0.1 }}
-                  whileHover={{ y: -5, scale: 1.1 }}
-                  className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-teal-500/20 hover:border-teal-400/50 transition-all"
-                >
-                  <social.icon
-                    size={22}
-                    className="text-gray-400 hover:text-teal-400"
-                  />
-                </motion.a>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Side - Contact Form */}
-          <motion.form
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            onSubmit={handleSubmit}
-            className="glass border border-white/10 rounded-2xl p-6 space-y-5"
-          >
+        <div className="grid lg:grid-cols-12 gap-x-14 gap-y-12">
+          {/* Direct routes */}
+          <FadeUp className="lg:col-span-5 space-y-10" stagger={0.1}>
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
-                Your Name
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal-400/50 focus:ring-1 focus:ring-teal-400/50 transition"
-                placeholder="John Doe"
-                required
-              />
+              <p className="lede mb-6">
+                Got a product to build, a team to strengthen, or just want to
+                compare notes on React Native? My inbox is open.
+              </p>
+              <a
+                href={`mailto:${EMAIL}`}
+                className="group inline-block font-[family-name:var(--font-display)] text-xl md:text-2xl font-semibold tracking-tight break-all border-b border-[var(--line-strong)] pb-1 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+              >
+                {EMAIL}
+                <span className="inline-block ml-2 transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </a>
             </div>
+
+            <div className="grid grid-cols-2 gap-y-6">
+              <div>
+                <p className="mono mb-1.5">Location</p>
+                <p className="text-sm">Lagos, Nigeria · WAT</p>
+              </div>
+              <div>
+                <p className="mono mb-1.5">Response time</p>
+                <p className="text-sm">Usually within 24 hours</p>
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal-400/50 focus:ring-1 focus:ring-teal-400/50 transition"
-                placeholder="hello@example.com"
-                required
-              />
+              <p className="mono mb-3">Elsewhere</p>
+              <div className="flex flex-col gap-2.5">
+                {SOCIALS.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-arrow self-start"
+                  >
+                    <s.icon size={14} />
+                    {s.label}
+                    <span className="arrow">↗</span>
+                  </a>
+                ))}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm text-gray-400 mb-2">
-                Message
-              </label>
-              <textarea
-                rows={4}
-                value={formData.message}
-                onChange={(e) =>
-                  setFormData({ ...formData, message: e.target.value })
-                }
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-teal-400/50 focus:ring-1 focus:ring-teal-400/50 transition resize-none"
-                placeholder="Tell me about your project..."
-                required
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full bg-teal-600 hover:bg-teal-500 py-6 text-lg"
-            >
-              <Send className="mr-2 h-5 w-5" /> Send Message
-            </Button>
-          </motion.form>
+          </FadeUp>
+
+          {/* Form */}
+          <FadeUp className="lg:col-span-7" y={30}>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div>
+                <label htmlFor="name" className="mono block mb-1">
+                  01 / Your name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="field"
+                  placeholder="Ada Lovelace"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="mono block mb-1">
+                  02 / Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="field"
+                  placeholder="you@company.com"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="message" className="mono block mb-1">
+                  03 / What are you building?
+                </label>
+                <textarea
+                  id="message"
+                  rows={4}
+                  required
+                  value={form.message}
+                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  className="field resize-none"
+                  placeholder="Tell me about the project, the timeline, and where you're stuck."
+                />
+              </div>
+
+              <button type="submit" className="link-arrow">
+                Send message <span className="arrow">→</span>
+              </button>
+            </form>
+          </FadeUp>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-24 pt-6 border-t border-[var(--line)] flex flex-wrap items-center justify-between gap-4">
+          <span className="mono">© {new Date().getFullYear()} Ezekiel Olabode</span>
+          <span className="mono">Next.js · GSAP · Tailwind</span>
+          <a href="#hero" className="mono hover:text-[var(--accent)] transition-colors">
+            Back to top ↑
+          </a>
+        </footer>
       </div>
     </section>
   );

@@ -1,116 +1,117 @@
 "use client";
 
-import { Calendar, MapPin, Award, Code, Coffee, Heart } from "lucide-react";
-import { motion } from "framer-motion";
+import SectionHead from "./SectionHead";
+import { SplitReveal, FadeUp, Counter } from "./Anim";
+
+/**
+ * Figures are derived from the Experience + Projects data on this site, not
+ * invented — update them here when either of those changes.
+ */
+const METRICS = [
+  { value: 4, suffix: "+", label: "Years building", note: "Since 2021" },
+  { value: 5, suffix: "", label: "Teams shipped with", note: "Startup to scale-up" },
+  { value: 11, suffix: "", label: "Products in production", note: "Web and mobile" },
+  { value: 2, suffix: "", label: "Platforms, one codebase", note: "React Native" },
+];
+
+const PRINCIPLES = [
+  {
+    n: "01",
+    title: "Ship the whole thing",
+    body: "Interface, API, database, deploy. I would rather own a feature end to end than hand off half of it and hope.",
+  },
+  {
+    n: "02",
+    title: "Measure, then decide",
+    body: "Mixpanel and PostHog on the important paths. Opinions are cheap; funnels tell you where users actually fall off.",
+  },
+  {
+    n: "03",
+    title: "Boring where it counts",
+    body: "Clever code is a liability at 2am. Predictable structure, clear names, and tests around the parts that move money.",
+  },
+];
 
 export default function About() {
-  const funFacts = [
-    { icon: Coffee, text: "Late night coder" },
-    { icon: Code, text: "10k+ hours typed" },
-    { icon: Heart, text: "Open source enthusiast" },
-  ];
-
   return (
-    <section id="about" className="py-20 px-6 bg-[#0a0a0a]">
-      <div className="max-w-5xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl font-bold mb-12 text-center"
-        >
-          About Me
-        </motion.h2>
+    <section id="about" className="section">
+      <div className="shell">
+        <SectionHead index="01" title="About" aside="Lagos, Nigeria" />
 
-        <div className="grid md:grid-cols-2 gap-10 items-start">
-          {/* Left side - Intro + Stats Cards */}
-          <div className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="space-y-4"
-            >
-              <h3 className="text-2xl font-semibold text-teal-400">
-                Hey there! 👋
-              </h3>
-              <p className="text-gray-300 leading-relaxed">
-                I&apos;m a Software Engineer with a strong foundation in both
-                web and mobile application development, passionate about
-                building scalable, user-focused digital experiences.
-              </p>
-            </motion.div>
+        {/* Manifesto — philosophy before credentials, per anthonyokeh.com */}
+        <SplitReveal as="h2" className="display-md max-w-[18ch] mb-14">
+          I don&apos;t just write code. I build things that hold up in
+          production.
+        </SplitReveal>
 
-            {/* Stats Cards - Vertical or side by side */}
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { icon: Calendar, label: "Experience", value: "3+ Years" },
-                { icon: MapPin, label: "Location", value: "Lagos, Nigeria" },
-                { icon: Award, label: "Focus", value: "Full-Stack" },
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  className="glass border border-white/10 rounded-xl p-4 text-center hover:border-teal-400/40"
-                >
-                  <item.icon className="mx-auto mb-2 text-teal-400" size={24} />
-                  <p className="text-xs text-gray-400">{item.label}</p>
-                  <p className="text-lg font-semibold mt-0.5">{item.value}</p>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Fun facts */}
-            <div className="flex flex-wrap gap-2 pt-2">
-              {funFacts.map((fact, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + i * 0.1 }}
-                  className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full text-sm text-gray-300"
-                >
-                  <fact.icon size={14} className="text-teal-400" />
-                  {fact.text}
-                </motion.span>
-              ))}
-            </div>
-          </div>
-
-          {/* Right side - Detailed Bio */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="glass border border-white/10 rounded-2xl p-6 space-y-4"
-          >
-            <p className="text-gray-300 leading-relaxed text-sm">
-              I specialize in building responsive web applications and
-              cross-platform mobile solutions. My approach combines clean code
-              with intuitive design, ensuring both functionality and user
-              experience.
+        <div className="grid lg:grid-cols-12 gap-x-12 gap-y-14">
+          {/* Bio */}
+          <FadeUp className="lg:col-span-7 space-y-5" stagger={0.1}>
+            <p className="text-[15px] leading-relaxed">
+              I&apos;m Ezekiel — a software engineer working across web and
+              mobile. I started in frontend, kept following problems into the
+              backend, and now I&apos;m most useful where the two meet: shipping
+              a React Native screen and the Node.js endpoint behind it in the
+              same afternoon.
             </p>
-            <p className="text-gray-300 leading-relaxed text-sm">
-              Currently, I&apos;m working with{" "}
-              <span className="text-teal-400">
-                Node,PostgreSQL, React, Next.js,
-              </span>{" "}
-              and <span className="text-teal-400">React Native</span> to deliver
-              high-quality products. I&apos;m always eager to learn new
-              technologies and tackle challenging problems.
+            <p className="text-[15px] leading-relaxed">
+              Right now I&apos;m at{" "}
+              <span className="text-[var(--accent)]">Roov Africa</span>, a
+              property tech company, building mobile experiences in React Native
+              on top of Node.js services. Before that I spent time in edtech and
+              marketplaces — Learnpally, RentAnything, EkoPages — which is where
+              I learned that auth flows, payment integrations, and push
+              notifications are where products quietly live or die.
             </p>
+            <p className="text-[15px] leading-relaxed">
+              I care about the unglamorous parts: sensible database schemas,
+              access control that actually works, and analytics wired up before
+              anyone asks for a dashboard.
+            </p>
+
             <div className="pt-3">
-              <span className="inline-block bg-teal-500/10 border border-teal-500/20 rounded-full px-4 py-1.5 text-xs text-teal-300">
-                🚀 Open for opportunities
-              </span>
+              <a href="/eazycv.pdf" target="_blank" rel="noopener noreferrer" className="link-arrow">
+                Download résumé <span className="arrow">↗</span>
+              </a>
             </div>
-          </motion.div>
+          </FadeUp>
+
+          {/* Metrics — quantified impact, per anthonyokeh.com */}
+          <FadeUp
+            className="lg:col-span-5 grid grid-cols-2 gap-px bg-[var(--line)] border border-[var(--line)]"
+            stagger={0.08}
+          >
+            {METRICS.map((m) => (
+              <div key={m.label} className="bg-[var(--bg)] p-5">
+                <p className="font-[family-name:var(--font-display)] text-4xl font-bold tracking-tight text-[var(--fg)]">
+                  <Counter to={m.value} suffix={m.suffix} />
+                </p>
+                <p className="mono mt-2 !tracking-[0.1em] text-[var(--fg-muted)]">
+                  {m.label}
+                </p>
+                <p className="mono mt-1 !text-[0.62rem] !tracking-[0.06em]">
+                  {m.note}
+                </p>
+              </div>
+            ))}
+          </FadeUp>
         </div>
+
+        {/* Principles */}
+        <FadeUp
+          className="grid md:grid-cols-3 gap-px bg-[var(--line)] border border-[var(--line)] mt-16"
+          stagger={0.1}
+        >
+          {PRINCIPLES.map((p) => (
+            <div key={p.n} className="bg-[var(--bg)] p-6">
+              <span className="mono-accent">{p.n}</span>
+              <h3 className="text-lg font-semibold mt-3 mb-2 normal-case tracking-tight">
+                {p.title}
+              </h3>
+              <p className="text-sm leading-relaxed">{p.body}</p>
+            </div>
+          ))}
+        </FadeUp>
       </div>
     </section>
   );
