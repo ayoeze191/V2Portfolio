@@ -65,7 +65,7 @@ function QuoteBlock({ rec, index }: { rec: Rec; index: number }) {
   return (
     <figure
       ref={ref}
-      className="border-t border-[var(--line)] pt-8"
+      className="panel"
       style={{ opacity: 0 }}
     >
       <span className="mono-accent">{String(index + 1).padStart(2, "0")}</span>

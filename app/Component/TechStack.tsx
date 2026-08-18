@@ -1,109 +1,183 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef, type ElementType } from "react";
+import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/app/lib/gsap";
+import SectionHead from "./SectionHead";
+import { SplitReveal, Marquee } from "./Anim";
+import {
+  SiReact,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiTypescript,
+  SiTailwindcss,
+  SiMongodb,
+  SiPostgresql,
+  SiDocker,
+  SiGit,
+  SiExpress,
+  SiFirebase,
+  SiVuedotjs,
+  SiDjango,
+  SiThreedotjs,
+  SiJavascript,
+  SiRedux,
+  SiGraphql,
+  SiPrisma,
+  SiRedis,
+  SiVercel,
+  SiGreensock,
+  SiExpo,
+} from "react-icons/si";
+import { FaMobileAlt, FaPython } from "react-icons/fa";
+
+type Tech = { name: string; icon: ElementType };
+
+/** Grouped the way dorisfaki.tech splits competence, numbered the way anthonyokeh.com does. */
+const GROUPS: { label: string; items: Tech[] }[] = [
+  {
+    label: "Frontend & Mobile",
+    items: [
+      { name: "React", icon: SiReact },
+      { name: "React Native", icon: FaMobileAlt },
+      { name: "Next.js", icon: SiNextdotjs },
+      { name: "TypeScript", icon: SiTypescript },
+      { name: "JavaScript", icon: SiJavascript },
+      { name: "Expo", icon: SiExpo },
+      { name: "Vue 3", icon: SiVuedotjs },
+      { name: "Redux", icon: SiRedux },
+      { name: "Tailwind", icon: SiTailwindcss },
+      { name: "GSAP", icon: SiGreensock },
+      { name: "Three.js", icon: SiThreedotjs },
+    ],
+  },
+  {
+    label: "Backend & Data",
+    items: [
+      { name: "Node.js", icon: SiNodedotjs },
+      { name: "Express", icon: SiExpress },
+      { name: "PostgreSQL", icon: SiPostgresql },
+      { name: "MongoDB", icon: SiMongodb },
+      { name: "Prisma", icon: SiPrisma },
+      { name: "Redis", icon: SiRedis },
+      { name: "GraphQL", icon: SiGraphql },
+      { name: "Python", icon: FaPython },
+      { name: "Django", icon: SiDjango },
+    ],
+  },
+  {
+    label: "Platform & Tooling",
+    items: [
+      { name: "Docker", icon: SiDocker },
+      { name: "Git", icon: SiGit },
+      { name: "Firebase", icon: SiFirebase },
+      { name: "Vercel", icon: SiVercel },
+    ],
+  },
+];
+
+/**
+ * Numbering runs continuously across groups (01 … 24). Precomputed rather than
+ * incremented during render — a render-time counter is not idempotent.
+ */
+const GROUP_OFFSETS = GROUPS.reduce<number[]>((acc, group, i) => {
+  acc.push(i === 0 ? 0 : acc[i - 1] + GROUPS[i - 1].items.length);
+  return acc;
+}, []);
+
+const TOTAL_TOOLS = GROUPS.reduce((n, g) => n + g.items.length, 0);
+
+const MARQUEE_WORDS = [
+  "React Native",
+  "Node.js",
+  "TypeScript",
+  "PostgreSQL",
+  "Next.js",
+  "Express",
+  "Prisma",
+  "Redis",
+];
 
 export default function TechStack() {
-  const techStack = [
-    { name: "React", level: "Advanced" },
-    { name: "Next.js", level: "Advanced" },
-    { name: "React Native", level: "Advanced" },
-    { name: "TypeScript", level: "Advanced" },
-    { name: "Node.js", level: "Advanced" },
-    { name: "Express", level: "Advanced" },
-    { name: "Tailwind CSS", level: "Advanced" },
-    { name: "Firebase", level: "Intermediate" },
-    { name: "Vue.js", level: "Intermediate" },
-    { name: "Django", level: "Intermediate" },
-    { name: "PostgreSQL", level: "Intermediate" },
-    { name: "MongoDB", level: "Intermediate" },
-    { name: "Framer Motion", level: "Intermediate" },
-    { name: "Three.js", level: "Beginner" },
-  ];
+  const root = useRef<HTMLDivElement>(null);
 
-  const tools = [
-    "Git",
-    "GitHub",
-    "Postman",
-    "Figma",
-    "Vercel",
-    "Docker",
-    "Mixpanel",
-    "PostHog",
-  ];
+  useGSAP(
+    () => {
+      if (prefersReducedMotion()) {
+        gsap.set("[data-cell]", { opacity: 1 });
+        return;
+      }
+
+      gsap.set("[data-cell]", { opacity: 1 });
+
+      // Cells pop in per-group, so each block reads as its own unit.
+      gsap.utils.toArray<HTMLElement>("[data-group]").forEach((group) => {
+        gsap.from(group.querySelectorAll("[data-cell]"), {
+          opacity: 0,
+          scale: 0.9,
+          duration: 0.55,
+          ease: EASE,
+          stagger: { each: 0.035, from: "start" },
+          scrollTrigger: { trigger: group, start: "top 88%", once: true },
+        });
+      });
+    },
+    { scope: root },
+  );
 
   return (
-    <section id="tech" className="py-20 px-6">
-      <div className="max-w-5xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl font-bold mb-12 text-center"
-        >
-          Tech Stack
-        </motion.h2>
+    <section id="stack" className="section">
+      <div className="shell" ref={root}>
+        <SectionHead index="04" title="Stack" aside={`${TOTAL_TOOLS} tools`} />
 
-        {/* Main Technologies */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-semibold mb-8 text-center text-teal-400">
-            Core Technologies
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {techStack.map((tech, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.8, y: 40 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.06 }}
-                whileHover={{ scale: 1.05, y: -6 }}
-                className="glass border border-white/10 rounded-2xl p-5 text-center hover:border-teal-400/50 group relative overflow-hidden"
-              >
-                {/* Glow effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/0 to-teal-500/0 group-hover:from-teal-500/10 group-hover:to-purple-500/10 transition-all duration-500" />
+        <SplitReveal as="h2" className="display-md max-w-[16ch] mb-4">
+          The tools I reach for first.
+        </SplitReveal>
+        <p className="lede mb-14">
+          Deep in the React and Node ecosystem, comfortable everywhere else.
+          Nothing here is on the list because it looked good on a CV.
+        </p>
 
-                {/* Icon placeholder - replace with actual icons */}
-                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                  {tech.name[0]}{" "}
-                  {/* Or use a proper icon library like react-icons */}
-                </div>
+        <div className="space-y-12">
+          {GROUPS.map((group, gi) => (
+            <div key={group.label} data-group>
+              <div className="flex items-baseline gap-4 mb-5">
+                <span className="mono-accent">{group.label}</span>
+                <span className="mono ml-auto">{group.items.length}</span>
+              </div>
 
-                <p className="font-semibold text-lg mb-2">{tech.name}</p>
-
-                <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-medium
-      ${tech.level === "Advanced" ? "bg-teal-500/20 text-teal-300 border border-teal-500/30" : ""}
-      ${tech.level === "Intermediate" ? "bg-blue-500/20 text-blue-300 border border-blue-500/30" : ""}
-      ${tech.level === "Beginner" ? "bg-purple-500/20 text-purple-300 border border-purple-500/30" : ""}
-    `}
-                >
-                  {tech.level}
-                </span>
-              </motion.div>
-            ))}
-          </div>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-1.5">
+                {group.items.map((tech, ti) => (
+                  <div
+                    key={tech.name}
+                    data-cell
+                    className="stack-cell"
+                    style={{ opacity: 0 }}
+                  >
+                    <span className="num">
+                      {String(GROUP_OFFSETS[gi] + ti + 1).padStart(2, "0")}
+                    </span>
+                    <tech.icon className="w-6 h-6 self-start" />
+                    <span className="label">{tech.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* Tools & Others */}
-        <div>
-          <h3 className="text-2xl font-semibold mb-8 text-center text-teal-400">
-            Tools & Others
-          </h3>
-          <div className="flex flex-wrap justify-center gap-3">
-            {tools.map((tool, index) => (
-              <motion.span
-                key={index}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.04 }}
-                className="glass border border-white/10 px-6 py-3 rounded-full text-sm hover:bg-white/5 transition"
-              >
-                {tool}
-              </motion.span>
-            ))}
-          </div>
-        </div>
+      {/* Full-bleed marquee — the one piece of pure motion in this section */}
+      <div className="mt-20 py-6">
+        <Marquee speed={34}>
+          {MARQUEE_WORDS.map((word, i) => (
+            <span
+              key={word}
+              className={`marquee-item ${i % 2 === 1 ? "solid" : ""}`}
+            >
+              {word} <span className="text-[var(--accent)]">·</span>
+            </span>
+          ))}
+        </Marquee>
       </div>
     </section>
   );

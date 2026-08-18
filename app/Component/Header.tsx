@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap, useGSAP, ScrollTrigger, EASE_EXPO } from "@/app/lib/gsap";
+import { usePathname } from "next/navigation";
+import {
+  gsap,
+  useGSAP,
+  ScrollTrigger,
+  EASE_EXPO,
+  prefersReducedMotion,
+} from "@/app/lib/gsap";
 
 const NAV = [
   { id: "#about", index: "01", label: "About" },
@@ -40,7 +47,13 @@ export default function Header() {
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
   const time = useLagosTime();
+
+  /* The nav points at sections of the home page, so away from "/" every anchor
+     has to be rewritten as a cross-page link. */
+  const isHome = usePathname() === "/";
+  const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
 
   /* Scroll progress rail + backdrop that only appears once you leave the hero. */
   useGSAP(() => {
@@ -56,9 +69,8 @@ export default function Header() {
     });
 
     gsap.to(navRef.current, {
-      backgroundColor: "rgba(8, 9, 10, 0.82)",
-      backdropFilter: "blur(14px)",
-      borderBottomColor: "rgba(255,255,255,0.11)",
+      backgroundColor: "rgba(0, 0, 0, 0.72)",
+      backdropFilter: "blur(16px)",
       duration: 0.4,
       scrollTrigger: {
         trigger: document.documentElement,
@@ -67,6 +79,32 @@ export default function Header() {
       },
     });
   }, []);
+
+  /* Hamburger → X. The two bars slide onto a shared centre line and cross;
+     the 6px gap plus a 2px bar puts each centre 4px from the middle. */
+  useGSAP(
+    () => {
+      const bars = burgerRef.current?.querySelectorAll<HTMLElement>("[data-bar]");
+      if (!bars?.length) return;
+
+      const [top, bottom] = Array.from(bars);
+      const duration = prefersReducedMotion() ? 0 : 0.5;
+
+      gsap.to(top, {
+        y: open ? 4 : 0,
+        rotate: open ? 45 : 0,
+        duration,
+        ease: EASE_EXPO,
+      });
+      gsap.to(bottom, {
+        y: open ? -4 : 0,
+        rotate: open ? -45 : 0,
+        duration,
+        ease: EASE_EXPO,
+      });
+    },
+    { dependencies: [open], scope: burgerRef },
+  );
 
   /* Fullscreen mobile menu: panel wipes down, links stagger up behind it. */
   useGSAP(
@@ -117,11 +155,11 @@ export default function Header() {
     <>
       <nav
         ref={navRef}
-        className="fixed top-0 inset-x-0 z-50 border-b border-transparent"
-        style={{ backgroundColor: "rgba(8,9,10,0)" }}
+        className="fixed top-0 inset-x-0 z-50"
+        style={{ backgroundColor: "rgba(0,0,0,0)" }}
       >
         <div className="shell flex items-center justify-between py-4">
-          <a href="#hero" className="flex items-baseline gap-2 group">
+          <a href={sectionHref("#hero")} className="flex items-baseline gap-2 group">
             <span className="font-[family-name:var(--font-display)] text-base font-bold tracking-tight uppercase">
               Ezekiel Olabode
             </span>
@@ -134,7 +172,7 @@ export default function Header() {
             {NAV.map((item) => (
               <a
                 key={item.id}
-                href={item.id}
+                href={sectionHref(item.id)}
                 className="group flex items-baseline gap-1.5 mono hover:text-[var(--fg)] transition-colors"
               >
                 <span className="text-[var(--accent)] opacity-60 group-hover:opacity-100 transition-opacity">
@@ -159,20 +197,33 @@ export default function Header() {
             </a>
 
             <button
+              ref={burgerRef}
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="lg:hidden mono text-[var(--fg)] px-2 py-1 border border-[var(--line)] z-50 relative"
+              className="group lg:hidden grid place-items-center w-11 h-11 rounded-full bg-[var(--surface-2)] hover:bg-[var(--surface-3)] transition-colors z-50 relative"
             >
-              {open ? "Close" : "Menu"}
+              {/* Two bars rather than three: they converge on the centre line
+                  and cross, so the open and closed states are the same two
+                  elements rotated — nothing appears or disappears. */}
+              <span className="flex flex-col items-center gap-[6px]">
+                <span
+                  data-bar
+                  className="block h-[2px] w-[22px] rounded-full bg-[var(--fg)] group-hover:bg-[var(--accent)] transition-colors"
+                />
+                <span
+                  data-bar
+                  className="block h-[2px] w-[22px] rounded-full bg-[var(--fg)] group-hover:bg-[var(--accent)] transition-colors"
+                />
+              </span>
             </button>
           </div>
         </div>
 
-        {/* Scroll progress rail */}
+        {/* Scroll progress bar — a read-position indicator, not a divider. */}
         <div
           ref={progressRef}
-          className="h-px bg-[var(--accent)] origin-left"
+          className="h-[2px] bg-[linear-gradient(90deg,var(--accent-deep),var(--accent))] origin-left rounded-full"
           style={{ transform: "scaleX(0)" }}
         />
       </nav>
@@ -188,7 +239,7 @@ export default function Header() {
             <div key={item.id} className="overflow-hidden">
               <a
                 data-menu-item
-                href={item.id}
+                href={sectionHref(item.id)}
                 onClick={() => setOpen(false)}
                 className="flex items-baseline gap-4 py-1.5 group"
               >

@@ -10,20 +10,20 @@ import { SplitReveal, FadeUp, Counter } from "./Anim";
 const METRICS = [
   { value: 4, suffix: "+", label: "Years building", note: "Since 2021" },
   { value: 5, suffix: "", label: "Teams shipped with", note: "Startup to scale-up" },
-  { value: 11, suffix: "", label: "Products in production", note: "Web and mobile" },
-  { value: 2, suffix: "", label: "Platforms, one codebase", note: "React Native" },
+  { value: 11, suffix: "", label: "Services in production", note: "Node · Django" },
+  { value: 3, suffix: "", label: "Datastores in anger", note: "Postgres · Mongo · Redis" },
 ];
 
 const PRINCIPLES = [
   {
     n: "01",
-    title: "Ship the whole thing",
-    body: "Interface, API, database, deploy. I would rather own a feature end to end than hand off half of it and hope.",
+    title: "The schema comes first",
+    body: "Most product bugs are data-model bugs in a costume. I would rather spend a day on the tables than a quarter on migrations that undo them.",
   },
   {
     n: "02",
-    title: "Measure, then decide",
-    body: "Mixpanel and PostHog on the important paths. Opinions are cheap; funnels tell you where users actually fall off.",
+    title: "Assume it runs twice",
+    body: "Webhooks arrive out of order, jobs retry, networks lie. Anything touching money or state gets keyed so a replay is a no-op.",
   },
   {
     n: "03",
@@ -40,32 +40,36 @@ export default function About() {
 
         {/* Manifesto — philosophy before credentials, per anthonyokeh.com */}
         <SplitReveal as="h2" className="display-md max-w-[18ch] mb-14">
-          I don&apos;t just write code. I build things that hold up in
-          production.
+          Most of what I build is the half you never see.
         </SplitReveal>
 
         <div className="grid lg:grid-cols-12 gap-x-12 gap-y-14">
           {/* Bio */}
           <FadeUp className="lg:col-span-7 space-y-5" stagger={0.1}>
             <p className="text-[15px] leading-relaxed">
-              I&apos;m Ezekiel — a software engineer working across web and
-              mobile. I started in frontend, kept following problems into the
-              backend, and now I&apos;m most useful where the two meet: shipping
-              a React Native screen and the Node.js endpoint behind it in the
-              same afternoon.
+              I&apos;m Ezekiel — a backend engineer. My work is the layer under
+              the interface: Node.js and Django services, Postgres and MongoDB
+              schemas, queue workers, and the auth and payment paths that decide
+              whether a product survives contact with real traffic.
             </p>
             <p className="text-[15px] leading-relaxed">
               Right now I&apos;m at{" "}
               <span className="text-[var(--accent)]">Roov Africa</span>, a
-              property tech company, building mobile experiences in React Native
-              on top of Node.js services. Before that I spent time in edtech and
-              marketplaces — Learnpally, RentAnything, EkoPages — which is where
-              I learned that auth flows, payment integrations, and push
-              notifications are where products quietly live or die.
+              property tech company, building the Node.js services behind a
+              property platform — listings, search, and the user workflows that
+              hang off them. Before that: Learnpally, RentAnything and EkoPages,
+              where I owned the parts products quietly die on — Paystack and
+              Stripe reconciliation, JWT and OAuth 2.0, role-based access
+              control, BullMQ workers, and push delivery that fires once instead
+              of four times.
             </p>
             <p className="text-[15px] leading-relaxed">
-              I care about the unglamorous parts: sensible database schemas,
-              access control that actually works, and analytics wired up before
+              I write the frontend too — React and React Native, and I enjoy it
+              — but I&apos;m most valuable when I own the data model and the
+              endpoints first, then build the screen that consumes them. The
+              unglamorous parts are the point: schemas that don&apos;t need
+              rewriting a quarter later, access control enforced at the data
+              layer rather than in components, and analytics wired up before
               anyone asks for a dashboard.
             </p>
 
@@ -78,11 +82,14 @@ export default function About() {
 
           {/* Metrics — quantified impact, per anthonyokeh.com */}
           <FadeUp
-            className="lg:col-span-5 grid grid-cols-2 gap-px bg-[var(--line)] border border-[var(--line)]"
+            className="lg:col-span-5 grid grid-cols-2 gap-3"
             stagger={0.08}
           >
             {METRICS.map((m) => (
-              <div key={m.label} className="bg-[var(--bg)] p-5">
+              <div
+                key={m.label}
+                className="bg-[var(--surface)] rounded-[var(--radius)] p-5"
+              >
                 <p className="font-[family-name:var(--font-display)] text-4xl font-bold tracking-tight text-[var(--fg)]">
                   <Counter to={m.value} suffix={m.suffix} />
                 </p>
@@ -99,11 +106,14 @@ export default function About() {
 
         {/* Principles */}
         <FadeUp
-          className="grid md:grid-cols-3 gap-px bg-[var(--line)] border border-[var(--line)] mt-16"
+          className="grid md:grid-cols-3 gap-3 mt-16"
           stagger={0.1}
         >
           {PRINCIPLES.map((p) => (
-            <div key={p.n} className="bg-[var(--bg)] p-6">
+            <div
+              key={p.n}
+              className="bg-[var(--surface)] rounded-[var(--radius-lg)] p-6"
+            >
               <span className="mono-accent">{p.n}</span>
               <h3 className="text-lg font-semibold mt-3 mb-2 normal-case tracking-tight">
                 {p.title}

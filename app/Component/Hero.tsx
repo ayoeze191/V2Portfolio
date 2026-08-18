@@ -49,14 +49,9 @@ export default function Hero() {
             "-=0.45",
           )
           .from(
-            "[data-hero-rule]",
-            { scaleX: 0, transformOrigin: "left", duration: 1.1 },
-            "-=0.8",
-          )
-          .from(
             "[data-hero-copy] > *",
             { y: 26, opacity: 0, duration: 0.9, stagger: 0.09 },
-            "-=0.85",
+            "-=0.8",
           )
           .from(
             "[data-hero-meta] > *",
@@ -108,14 +103,19 @@ export default function Hero() {
           <div data-anim data-hero-eyebrow style={{ opacity: 0 }}>
             <span className="status">
               <span className="dot" />
-              Available for new work
+              Available for work
             </span>
           </div>
         </div>
 
         {/* Oversized display headline */}
         <h1 data-hero-title className="display mb-8">
-          <span data-anim data-hero-line className="block" style={{ opacity: 0 }}>
+          <span
+            data-anim
+            data-hero-line
+            className="block"
+            style={{ opacity: 0 }}
+          >
             Software
           </span>
           <span
@@ -128,14 +128,7 @@ export default function Hero() {
           </span>
         </h1>
 
-        <div
-          data-anim
-          data-hero-rule
-          className="h-px w-full bg-[var(--line)] mb-8"
-          style={{ opacity: 0 }}
-        />
-
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-end mt-12">
           <div
             data-anim
             data-hero-copy
@@ -190,10 +183,7 @@ export default function Hero() {
         </div>
 
         {/* Scroll cue */}
-        <div
-          data-hero-cue
-          className="mt-14 flex items-center justify-between border-t border-[var(--line)] pt-5"
-        >
+        <div data-hero-cue className="mt-16 flex items-center justify-between">
           <span className="mono flex items-center gap-2">
             Scroll
             <span className="inline-block animate-bounce">↓</span>

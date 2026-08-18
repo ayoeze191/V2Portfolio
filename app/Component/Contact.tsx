@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import SectionHead from "./SectionHead";
+import Footer from "./Footer";
 import { SplitReveal, FadeUp } from "./Anim";
 
 const EMAIL = "ayoeze191@gmail.com";
@@ -57,7 +58,7 @@ export default function Contact() {
               </p>
               <a
                 href={`mailto:${EMAIL}`}
-                className="group inline-block font-[family-name:var(--font-display)] text-xl md:text-2xl font-semibold tracking-tight break-all border-b border-[var(--line-strong)] pb-1 hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+                className="group inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-xl md:text-2xl font-semibold tracking-tight break-all bg-[var(--surface)] hover:bg-[var(--surface-2)] rounded-[var(--radius)] px-5 py-4 transition-colors"
               >
                 {EMAIL}
                 <span className="inline-block ml-2 transition-transform group-hover:translate-x-1">
@@ -101,7 +102,7 @@ export default function Contact() {
           <FadeUp className="lg:col-span-7" y={30}>
             <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <label htmlFor="name" className="mono block mb-1">
+                <label htmlFor="name" className="mono block mb-2">
                   01 / Your name
                 </label>
                 <input
@@ -116,7 +117,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="email" className="mono block mb-1">
+                <label htmlFor="email" className="mono block mb-2">
                   02 / Email
                 </label>
                 <input
@@ -131,7 +132,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="message" className="mono block mb-1">
+                <label htmlFor="message" className="mono block mb-2">
                   03 / What are you building?
                 </label>
                 <textarea
@@ -152,14 +153,7 @@ export default function Contact() {
           </FadeUp>
         </div>
 
-        {/* Footer */}
-        <footer className="mt-24 pt-6 border-t border-[var(--line)] flex flex-wrap items-center justify-between gap-4">
-          <span className="mono">© {new Date().getFullYear()} Ezekiel Olabode</span>
-          <span className="mono">Next.js · GSAP · Tailwind</span>
-          <a href="#hero" className="mono hover:text-[var(--accent)] transition-colors">
-            Back to top ↑
-          </a>
-        </footer>
+        <Footer className="mt-24" />
       </div>
     </section>
   );

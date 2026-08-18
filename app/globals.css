@@ -3,31 +3,49 @@
 @import "shadcn/tailwind.css";
 
 /* ============================================
-   DESIGN TOKENS — dark editorial
-   High contrast, one accent, hairline rules.
-   Glass and mesh gradients are deliberately gone:
-   the references earn depth through type scale and
-   whitespace instead of blur.
+   DESIGN TOKENS — borderless, green on black
+   Ground and type follow cencori.com: true black,
+   neutral near-white text, no tinted surfaces. One
+   green carries every accent — indices, hovers,
+   status — so colour stays rationed and deliberate.
+
+   There are no rules or borders in this system.
+   Structure comes from stacked surfaces, radius and
+   whitespace — a hairline is never used to separate
+   two things that a gap can separate instead.
    ============================================ */
 :root {
-  /* Surfaces */
-  --bg: #08090a;
-  --bg-raised: #0e1012;
-  --bg-inset: #121417;
+  /* Elevation ladder. Each step is a flat fill on top of black; nothing is
+     tinted, so surfaces read as light level rather than as colour. */
+  --bg: #000000;
+  --surface: #0b0b0b;
+  --surface-2: #151515;
+  --surface-3: #1f1f1f;
+  --surface-4: #2b2b2b;
 
-  /* Hairlines — the primary structural device now */
-  --line: rgba(255, 255, 255, 0.11);
-  --line-strong: rgba(255, 255, 255, 0.22);
+  /* Text — neutral greys. Hierarchy is value alone. */
+  --fg: #fafafa;
+  --fg-muted: #a1a1a1;
+  --fg-faint: #6b6b6b;
 
-  /* Text — warm off-white reads more editorial than pure #fff */
-  --fg: #f4f3ef;
-  --fg-muted: #9a9a94;
-  --fg-faint: #5c5c57;
+  /* Emphasis — a single green, two stops, against the black.
+     lab(75.0771% -60.7313 19.4147) and lab(55.0481% -49.9246 15.93). */
+  --accent: #00d393;
+  --accent-deep: #009867;
+  --accent-soft: rgba(0, 211, 147, 0.12);
 
-  /* Accent — kept from the previous identity, used far more sparingly */
-  --accent: #2dd4bf;
-  --accent-dim: #0d9488;
-  --accent-soft: rgba(45, 212, 191, 0.1);
+  /* Status shares the accent hue — availability, live deployments. */
+  --signal: var(--accent);
+  --signal-soft: rgba(0, 211, 147, 0.18);
+
+  /* Radius scale — the shape language that replaces the old hairlines. */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Depth for anything that genuinely floats above the page. */
+  --shadow-float: 0 18px 50px rgba(0, 0, 0, 0.65);
 
   /* Fonts (wired to next/font variables in layout.tsx) */
   --font-body: var(--font-inter), system-ui, sans-serif;
@@ -44,10 +62,6 @@
 /* ============================================
    BASE
    ============================================ */
-* {
-  border-color: var(--line);
-}
-
 html {
   /* Lenis drives scrolling; native smooth scroll would fight it. */
   scroll-behavior: auto;
@@ -82,26 +96,30 @@ section {
 
 ::selection {
   background: var(--accent);
-  color: #04211d;
+  color: #000;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 9px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--line-strong);
+  background: var(--surface-4);
+  border-radius: var(--radius-pill);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--fg-faint);
 }
 
+/* The one intentional outline on the site: a keyboard focus ring, which is an
+   accessibility affordance rather than a decorative rule. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
+  border-radius: var(--radius-sm);
 }
 
 /* SplitText writes inline styles; this keeps masked lines clipped correctly. */
@@ -120,15 +138,21 @@ section {
   padding-inline: var(--gutter);
 }
 
+/* Sections are separated by breathing room and their own heading, never a rule. */
 .section {
-  padding-block: clamp(5rem, 12vh, 9rem);
-  border-top: 1px solid var(--line);
+  padding-block: clamp(5.5rem, 13vh, 10rem);
+}
+
+/* A raised block. The workhorse container now that cards cannot be outlined. */
+.panel {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
 }
 
 /* ============================================
    TYPE SCALE
-   Oversized, all-caps, tightly tracked — the
-   common thread across all the reference sites.
+   Oversized, all-caps, tightly tracked.
    ============================================ */
 .display {
   font-family: var(--font-display);
@@ -157,7 +181,6 @@ section {
 
 /* ============================================
    MONO SYSTEM — labels, indices, metadata.
-   Carries the terminal motif from the old site.
    ============================================ */
 .mono {
   font-family: var(--font-mono);
@@ -175,27 +198,30 @@ section {
   color: var(--accent);
 }
 
-/* Numbered section header: 01 / ABOUT */
+/* Numbered section header. The index sits in a filled tag, which does the job
+   the old underline did without drawing a line across the page. */
 .section-head {
   display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding-bottom: 1.25rem;
+  align-items: center;
+  gap: 0.85rem;
   margin-bottom: clamp(2rem, 5vw, 3.5rem);
-  border-bottom: 1px solid var(--line);
 }
 .section-head .index {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   letter-spacing: 0.14em;
   color: var(--accent);
+  background: var(--surface-2);
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
 }
 .section-head .title {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--fg);
+  /* The filled index carries the emphasis, so the label steps back a tone. */
+  color: var(--fg-muted);
 }
 .section-head .aside {
   margin-left: auto;
@@ -208,30 +234,31 @@ section {
 
 /* ============================================
    ARROW-LED LINKS
-   Borrowed from dorisfaki.tech — the arrow is the
-   affordance, and it slides on hover.
+   Soft filled pills. The arrow is the affordance,
+   and it slides on hover.
    ============================================ */
 .link-arrow {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--fg);
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-pill);
   transition:
-    color 0.3s var(--ease-out),
-    border-color 0.3s var(--ease-out);
+    background-color 0.3s var(--ease-out),
+    color 0.3s var(--ease-out);
 }
 .link-arrow .arrow {
   transition: transform 0.35s var(--ease-out);
 }
 .link-arrow:hover {
+  background: var(--surface-3);
   color: var(--accent);
-  border-color: var(--accent);
 }
 .link-arrow:hover .arrow {
   transform: translateX(5px);
@@ -249,16 +276,16 @@ section {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--fg-muted);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 0.45rem 0.95rem;
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1rem;
 }
 .status .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+  background: var(--signal);
+  box-shadow: 0 0 0 3px var(--signal-soft);
   animation: pulse 2.4s ease-in-out infinite;
 }
 @keyframes pulse {
@@ -276,43 +303,38 @@ section {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fg-muted);
-  border: 1px solid var(--line);
-  padding: 0.28rem 0.6rem;
+  background: var(--surface-3);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.7rem;
   white-space: nowrap;
   transition:
-    border-color 0.25s var(--ease-out),
+    background-color 0.25s var(--ease-out),
     color 0.25s var(--ease-out);
 }
 .chip:hover {
-  border-color: var(--accent-dim);
+  background: var(--surface-4);
   color: var(--accent);
 }
 
 /* ============================================
    EDITORIAL ROW — the project + experience list item.
-   A full-bleed hairline row that inverts on hover,
-   replacing the old card grid.
+   Formerly a hairline-separated row; now a soft card
+   that lifts on hover. Lists space them with a gap.
    ============================================ */
 .row {
   position: relative;
   display: block;
-  border-bottom: 1px solid var(--line);
-  padding-block: clamp(1.5rem, 3.5vw, 2.5rem);
-  transition: color 0.4s var(--ease-out);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: clamp(1.35rem, 3vw, 2rem) clamp(1.15rem, 2.5vw, 1.85rem);
+  transition:
+    background-color 0.4s var(--ease-out),
+    transform 0.4s var(--ease-out);
 }
-.row::after {
-  /* Wipe that fills the row from the left on hover. */
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--bg-raised);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.55s var(--ease-out);
-  z-index: -1;
-}
-.row:hover::after {
-  transform: scaleX(1);
+@media (hover: hover) {
+  .row:hover {
+    background: var(--surface-2);
+  }
 }
 .row .row-index {
   font-family: var(--font-mono);
@@ -328,7 +350,7 @@ section {
 }
 @media (hover: hover) {
   .row:hover .row-title {
-    transform: translateX(0.75rem);
+    transform: translateX(0.5rem);
   }
 }
 
@@ -343,13 +365,22 @@ section {
   z-index: 40;
   opacity: 0;
   overflow: hidden;
-  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-float);
   will-change: transform;
 }
 
+/* Media wells — images sit in a filled, rounded well instead of a frame. */
+.media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
 /* ============================================
-   NUMBERED STACK GRID
-   From anthonyokeh.com's periodic-table treatment.
+   STACK GRID — filled tiles, spaced by a gap.
    ============================================ */
 .stack-cell {
   position: relative;
@@ -358,14 +389,16 @@ section {
   justify-content: space-between;
   aspect-ratio: 1;
   padding: 0.85rem;
-  border: 1px solid var(--line);
-  margin: -0.5px; /* collapse doubled borders into single hairlines */
+  background: var(--surface);
+  border-radius: var(--radius-sm);
   transition:
     background-color 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out),
     color 0.3s var(--ease-out);
 }
 .stack-cell:hover {
-  background: var(--bg-raised);
+  background: var(--surface-2);
+  transform: translateY(-3px);
   color: var(--accent);
 }
 .stack-cell .num {
@@ -388,6 +421,8 @@ section {
 
 /* ============================================
    MARQUEE
+   Solid tones rather than outlined type — an
+   outline is still a line.
    ============================================ */
 .marquee-item {
   font-family: var(--font-display);
@@ -395,35 +430,36 @@ section {
   text-transform: uppercase;
   letter-spacing: -0.02em;
   font-size: clamp(1.75rem, 4.5vw, 3.5rem);
-  color: transparent;
-  -webkit-text-stroke: 1px var(--line-strong);
+  color: var(--surface-4);
   padding-inline: 1.5rem;
   white-space: nowrap;
 }
 .marquee-item.solid {
   color: var(--fg-faint);
-  -webkit-text-stroke: 0;
 }
 
 /* ============================================
-   FORM FIELDS
+   FORM FIELDS — filled, not underlined.
    ============================================ */
 .field {
   width: 100%;
-  background: transparent;
+  background: var(--surface-2);
   border: 0;
-  border-bottom: 1px solid var(--line);
-  padding: 0.85rem 0;
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.05rem;
   color: var(--fg);
   font-size: 1rem;
-  transition: border-color 0.3s var(--ease-out);
+  font-family: inherit;
+  transition: background-color 0.3s var(--ease-out);
 }
 .field::placeholder {
   color: var(--fg-faint);
 }
 .field:focus {
   outline: none;
-  border-color: var(--accent);
+  background: var(--surface-3);
+  /* A soft ring, so focus stays obvious without reintroducing a border. */
+  box-shadow: 0 0 0 2px var(--accent-deep);
 }
 
 /* ============================================

@@ -214,7 +214,7 @@ export default function Experience() {
           Five teams. One habit: finish what you start.
         </SplitReveal>
 
-        <div className="border-t border-[var(--line)]">
+        <div className="flex flex-col gap-2">
           {EXPERIENCE.map((item, i) => (
             <ExperienceRow
               key={item.company}
