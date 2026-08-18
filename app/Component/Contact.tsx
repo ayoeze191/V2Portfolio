@@ -58,7 +58,7 @@ export default function Contact() {
               </p>
               <a
                 href={`mailto:${EMAIL}`}
-                className="group inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-xl md:text-2xl font-semibold tracking-tight break-all bg-[var(--surface)] hover:bg-[var(--surface-2)] rounded-[var(--radius)] px-5 py-4 transition-colors"
+                className="group inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-xl md:text-2xl font-semibold tracking-tight break-all hover:text-[var(--accent)] transition-colors"
               >
                 {EMAIL}
                 <span className="inline-block ml-2 transition-transform group-hover:translate-x-1">

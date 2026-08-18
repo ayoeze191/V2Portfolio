@@ -6,7 +6,7 @@ import AboutContent from "./AboutContent";
 export const metadata: Metadata = {
   title: "About — Ezekiel Olabode",
   description:
-    "Backend engineer in Lagos, building Node.js and Django services, Postgres schemas, auth, payments and queue workers since 2021. Currently at Roov Africa.",
+    "Full-stack engineer in Lagos building products end to end since 2021 — React and React Native on top of Node.js and Django, with a bias for systems that scale. Currently at Roov Africa.",
 };
 
 export default function AboutPage() {

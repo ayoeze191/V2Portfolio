@@ -27,8 +27,8 @@ const CAPABILITIES = [
   },
   {
     n: "04",
-    area: "The client, when it helps",
-    body: "I build the frontend too — React, Next.js and React Native — which mostly means I design endpoints that are pleasant to consume, because I am usually the one consuming them.",
+    area: "Frontend & mobile",
+    body: "React, Next.js and React Native on top of all of it. Building both ends means I design endpoints that are pleasant to consume, because I am usually the one consuming them.",
     tools: ["React", "Next.js", "React Native", "Vue 3", "Tailwind"],
   },
 ];
@@ -72,18 +72,18 @@ export default function AboutContent() {
 
             <FadeUp className="lg:col-span-7 space-y-6" stagger={0.1}>
               <p className="lede !max-w-none">
-                I&apos;m Ezekiel — a backend engineer in Lagos. I build the
-                services, schemas and jobs that sit under the interface.
+                I&apos;m Ezekiel — a full-stack engineer in Lagos. I build
+                products end to end, and I like the parts that have to scale.
               </p>
 
               <p className="text-[15px] leading-relaxed">
                 I started in 2021 the way most people do: making pages look
                 right. What kept me here was everything behind them. I followed
                 one bug from a button into an API, from the API into a query
-                plan, and never really came back. The server side is where I
-                have stayed, because that is where a product is actually decided
-                — everything above it is a rendering of choices already made in
-                the data model.
+                plan, and kept going until I could build the whole path myself.
+                That is where I ended up: comfortable on either end, and most
+                interested in the decisions that determine whether a product
+                still works once there is real load on it.
               </p>
 
               <p className="text-[15px] leading-relaxed">
@@ -99,19 +99,16 @@ export default function AboutContent() {
               <p className="text-[15px] leading-relaxed">
                 Today I&apos;m at{" "}
                 <span className="text-[var(--accent)]">Roov Africa</span>, a
-                property tech company, building the Node.js services behind a
-                property platform. I&apos;d rather write something boring and
-                predictable than something clever I have to explain twice — and
-                I&apos;d rather spend a day on the schema than a quarter on the
-                migrations that undo it.
+                property tech company, working across React Native and the
+                Node.js services behind it. I&apos;d rather write something
+                boring and predictable than something clever I have to explain
+                twice — and I&apos;d rather spend a day on the schema than a
+                quarter on the migrations that undo it.
               </p>
 
-              <div className="grid grid-cols-2 gap-3 pt-2">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-7 pt-4">
                 {FACTS.map((f) => (
-                  <div
-                    key={f.label}
-                    className="bg-[var(--surface)] rounded-[var(--radius)] p-4"
-                  >
+                  <div key={f.label}>
                     <p className="mono mb-1.5">{f.label}</p>
                     <p className="text-sm text-[var(--fg)]">{f.value}</p>
                   </div>
@@ -142,11 +139,11 @@ export default function AboutContent() {
           <div className="section-head">
             <span className="index">01</span>
             <span className="title">What I do</span>
-            <span className="aside">APIs · Data · Jobs</span>
+            <span className="aside">End to end</span>
           </div>
 
           <SplitReveal as="h2" className="display-md max-w-[16ch] mb-14">
-            Backend first, and the client when it helps.
+            Both ends of the stack, built to scale.
           </SplitReveal>
 
           <div className="flex flex-col gap-2">

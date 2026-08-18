@@ -143,11 +143,10 @@ section {
   padding-block: clamp(5.5rem, 13vh, 10rem);
 }
 
-/* A raised block. The workhorse container now that cards cannot be outlined. */
+/* A content block. Spacing only — no fill, so nothing reads as a box.
+   Blocks are told apart by the whitespace around them and by type hierarchy. */
 .panel {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: clamp(1.5rem, 3vw, 2.25rem);
+  padding-block: clamp(1.25rem, 2.5vw, 1.75rem);
 }
 
 /* ============================================
@@ -324,16 +323,18 @@ section {
 .row {
   position: relative;
   display: block;
-  background: var(--surface);
+  /* No resting fill: rows sit straight on the black and are separated by
+     generous padding. The fill only appears under the cursor. */
+  background: transparent;
   border-radius: var(--radius);
-  padding: clamp(1.35rem, 3vw, 2rem) clamp(1.15rem, 2.5vw, 1.85rem);
+  padding: clamp(1.5rem, 3.2vw, 2.25rem) clamp(1rem, 2.2vw, 1.5rem);
   transition:
     background-color 0.4s var(--ease-out),
     transform 0.4s var(--ease-out);
 }
 @media (hover: hover) {
   .row:hover {
-    background: var(--surface-2);
+    background: var(--surface);
   }
 }
 .row .row-index {
@@ -389,7 +390,7 @@ section {
   justify-content: space-between;
   aspect-ratio: 1;
   padding: 0.85rem;
-  background: var(--surface);
+  background: transparent;
   border-radius: var(--radius-sm);
   transition:
     background-color 0.3s var(--ease-out),
