@@ -39,6 +39,32 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "ajo",
+    title: "Ajo",
+    role: "Full-Stack Developer",
+    year: "2026",
+    summary:
+      "Digital savings circles with Naira wallets, a double-entry ledger, Paystack funding, and automated payout rounds.",
+    tech: ["TypeScript", "PostgreSQL", "Paystack", "Double-entry Ledger"],
+    live: "https://neon-salmiakki-04c60d.netlify.app/",
+    featured: true,
+    detail: {
+      body: "Ajo brings the familiar rotating savings circle online: members fund individual wallets, contribute on a set schedule, and receive the full pot when it is their turn. The product keeps every movement traceable without asking one member to hold the group's money.",
+      features: [
+        "Naira wallets with card and bank-transfer top-ups through Paystack",
+        "Double-entry ledger with balances derived from immutable entries",
+        "Scheduled contribution collection and rotating payout rounds",
+        "Shareable circle invites with membership and schedule visibility",
+        "Idempotent payment and ledger writes to prevent duplicate charges",
+        "Transparent missed-payment records for every circle member",
+      ],
+      challenges:
+        "Money movement needs to remain correct when a payment is retried, a webhook is delivered twice, or a scheduled round runs more than once. Idempotency keys and database transactions ensure each movement is settled exactly once or not at all.",
+      learnings:
+        "For a financial product, the ledger is the source of truth. Deriving balances from matching debit and credit entries makes both the system and its audit trail easier to trust.",
+    },
+  },
+  {
     slug: "debsphere-academy",
     title: "Debsphere Academy",
     role: "Tech Lead",
