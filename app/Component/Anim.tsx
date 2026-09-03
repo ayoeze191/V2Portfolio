@@ -11,11 +11,6 @@ import {
   whenFontsReady,
 } from "@/app/lib/gsap";
 
-/* ============================================================
-   SplitReveal — masked line-by-line rise for display headlines.
-   The signature move of the site: text climbs out from behind a
-   clipped box rather than just fading in.
-   ============================================================ */
 export function SplitReveal({
   children,
   as: Tag = "h2",
@@ -83,7 +78,6 @@ export function SplitReveal({
     { scope: ref },
   );
 
-  // opacity:0 avoids a flash of unsplit text before fonts settle; GSAP restores it.
   return (
     <Tag ref={ref} className={className} style={{ opacity: 0 }}>
       {children}
@@ -91,10 +85,6 @@ export function SplitReveal({
   );
 }
 
-/* ============================================================
-   FadeUp — the workhorse scroll reveal for blocks of content.
-   Children are staggered when `stagger` is set.
-   ============================================================ */
 export function FadeUp({
   children,
   className = "",
@@ -150,10 +140,6 @@ export function FadeUp({
   );
 }
 
-/* ============================================================
-   Counter — animates a number up when it scrolls into view.
-   Used for the impact metrics in About.
-   ============================================================ */
 export function Counter({
   to,
   suffix = "",
@@ -200,11 +186,6 @@ export function Counter({
   );
 }
 
-/* ============================================================
-   Marquee — seamless infinite scroller driven by GSAP.
-   Duplicates its children once and translates by exactly -50%,
-   so the loop point is invisible.
-   ============================================================ */
 export function Marquee({
   children,
   speed = 30,
@@ -237,7 +218,6 @@ export function Marquee({
   return (
     <div ref={ref} className={`overflow-hidden ${className}`}>
       <div className="flex w-max">
-        {/* Two identical halves, so a -50% translate lands exactly on the seam. */}
         <span className="flex shrink-0">{children}</span>
         <span aria-hidden="true" className="flex shrink-0">
           {children}

@@ -20,7 +20,6 @@ const EXPERIENCE: Role[] = [
     role: "Software Engineer (Mobile & Backend)",
     period: "Aug 2026 — Present",
     location: "Lagos, Nigeria",
-    // TODO: swap these for the specific things you've shipped at Roov.
     points: [
       "Building cross-platform mobile experiences for a property tech product using React Native.",
       "Developing and maintaining Node.js services powering listings, search, and user workflows.",
@@ -96,7 +95,6 @@ function ExperienceRow({
   const panelRef = useRef<HTMLDivElement>(null);
   const rowRef = useRef<HTMLDivElement>(null);
 
-  // Animate the disclosure to its natural height, so content can be any length.
   useGSAP(
     () => {
       const panel = panelRef.current;
@@ -117,7 +115,6 @@ function ExperienceRow({
     { dependencies: [isOpen], scope: rowRef },
   );
 
-  // Reveal each row as it enters the viewport.
   useGSAP(
     () => {
       if (prefersReducedMotion()) {
@@ -202,7 +199,6 @@ function ExperienceRow({
 }
 
 export default function Experience() {
-  // The current role is expanded on load; the rest are one click away.
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (

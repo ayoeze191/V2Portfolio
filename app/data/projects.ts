@@ -1,5 +1,6 @@
 import type { StaticImageData } from "next/image";
 
+import ajoShot from "./../assets/images/Projects/ajo.png";
 import debsphere from "./../assets/images/Projects/debsphere.png";
 import learnpally from "./../assets/images/Projects/learnpally.png";
 import ekopages from "./../assets/images/Projects/ekopages.png";
@@ -9,13 +10,6 @@ import shibayc from "./../assets/images/Projects/shibayc.png";
 import githubUserFinder from "./../assets/images/Projects/githubfindme.png";
 import dogify from "./../assets/images/Projects/Dogify.png";
 
-/**
- * The single source of truth for work shown anywhere on the site.
- *
- * The home page renders `featuredProjects` as a tight edit; /projects renders
- * the full list with the `detail` block expanded inline. Add a project once,
- * here, and both surfaces pick it up.
- */
 export type Project = {
   slug: string;
   title: string;
@@ -26,9 +20,7 @@ export type Project = {
   live?: string;
   github?: string;
   image?: StaticImageData;
-  /** Shown on the home page list. Everything else lives in the archive only. */
   featured?: boolean;
-  /** Long-form notes, revealed when an archive row is expanded. */
   detail?: {
     body?: string;
     features?: string[];
@@ -47,6 +39,7 @@ export const projects: Project[] = [
       "Digital savings circles with Naira wallets, a double-entry ledger, Paystack funding, and automated payout rounds.",
     tech: ["TypeScript", "PostgreSQL", "Paystack", "Double-entry Ledger"],
     live: "https://neon-salmiakki-04c60d.netlify.app/",
+    image: ajoShot,
     featured: true,
     detail: {
       body: "Ajo brings the familiar rotating savings circle online: members fund individual wallets, contribute on a set schedule, and receive the full pot when it is their turn. The product keeps every movement traceable without asking one member to hold the group's money.",
@@ -301,5 +294,4 @@ export const projects: Project[] = [
   },
 ];
 
-/** The tight edit shown on the home page. */
 export const featuredProjects = projects.filter((p) => p.featured);

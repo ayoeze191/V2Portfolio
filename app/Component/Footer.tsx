@@ -1,7 +1,3 @@
-/**
- * Shared page footer. Every page renders an element with id="top", so the
- * back-to-top anchor is routed through Lenis like any other in-page link.
- */
 export default function Footer({ className = "" }: { className?: string }) {
   return (
     <footer

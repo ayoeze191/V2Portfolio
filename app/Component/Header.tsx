@@ -9,17 +9,16 @@ import {
   EASE_EXPO,
   prefersReducedMotion,
 } from "@/app/lib/gsap";
+import ThemeToggle from "./home/ThemeToggle";
 
 const NAV = [
   { id: "#about", index: "01", label: "About" },
   { id: "#experience", index: "02", label: "Experience" },
   { id: "#work", index: "03", label: "Work" },
   { id: "#stack", index: "04", label: "Stack" },
-  { id: "#words", index: "05", label: "Words" },
-  { id: "#contact", index: "06", label: "Contact" },
+  { id: "#contact", index: "05", label: "Contact" },
 ];
 
-/** Live Lagos time — the "location + timezone" cue from dorisfaki.tech. */
 function useLagosTime() {
   const [time, setTime] = useState<string>("");
 
@@ -50,12 +49,9 @@ export default function Header() {
   const burgerRef = useRef<HTMLButtonElement>(null);
   const time = useLagosTime();
 
-  /* The nav points at sections of the home page, so away from "/" every anchor
-     has to be rewritten as a cross-page link. */
   const isHome = usePathname() === "/";
   const sectionHref = (hash: string) => (isHome ? hash : `/${hash}`);
 
-  /* Scroll progress rail + backdrop that only appears once you leave the hero. */
   useGSAP(() => {
     gsap.to(progressRef.current, {
       scaleX: 1,
@@ -68,20 +64,18 @@ export default function Header() {
       },
     });
 
-    gsap.to(navRef.current, {
-      backgroundColor: "rgba(0, 0, 0, 0.72)",
-      backdropFilter: "blur(16px)",
-      duration: 0.4,
-      scrollTrigger: {
-        trigger: document.documentElement,
-        start: "top+=80 top",
-        toggleActions: "play none none reverse",
-      },
+    // Solid rather than backdrop-filter: a blurred fixed bar forces a full
+    // repaint on every scroll frame, which is the main source of scroll jank.
+    // The colour is a class, not a tween — GSAP can't interpolate var(), and
+    // the bar has to answer to whichever theme is live.
+    ScrollTrigger.create({
+      trigger: document.documentElement,
+      start: "top+=80 top",
+      onToggle: (self) =>
+        navRef.current?.classList.toggle("nav-solid", self.isActive),
     });
   }, []);
 
-  /* Hamburger → X. The two bars slide onto a shared centre line and cross;
-     the 6px gap plus a 2px bar puts each centre 4px from the middle. */
   useGSAP(
     () => {
       const bars = burgerRef.current?.querySelectorAll<HTMLElement>("[data-bar]");
@@ -106,7 +100,6 @@ export default function Header() {
     { dependencies: [open], scope: burgerRef },
   );
 
-  /* Fullscreen mobile menu: panel wipes down, links stagger up behind it. */
   useGSAP(
     () => {
       const menu = menuRef.current;
@@ -138,7 +131,6 @@ export default function Header() {
     { dependencies: [open], scope: menuRef },
   );
 
-  // Lock body scroll while the overlay is open.
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -146,25 +138,20 @@ export default function Header() {
     };
   }, [open]);
 
-  // Anchor navigation changes the document position; keep triggers in sync.
   useEffect(() => {
     ScrollTrigger.refresh();
   }, []);
 
   return (
     <>
-      <nav
-        ref={navRef}
-        className="fixed top-0 inset-x-0 z-50"
-        style={{ backgroundColor: "rgba(0,0,0,0)" }}
-      >
+      <nav ref={navRef} className="site-nav fixed top-0 inset-x-0 z-50">
         <div className="shell flex items-center justify-between py-4">
           <a href={sectionHref("#hero")} className="flex items-baseline gap-2 group">
             <span className="font-[family-name:var(--font-display)] text-base font-bold tracking-tight uppercase">
               Ezekiel Olabode
             </span>
             <span className="mono-accent hidden sm:inline">
-              [Software Engineer]
+              [Product Engineer]
             </span>
           </a>
 
@@ -184,7 +171,7 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="mono hidden md:inline tabular-nums">
+            <span className="mono hidden 2xl:inline tabular-nums">
               Lagos {time} WAT
             </span>
             <a
@@ -195,6 +182,7 @@ export default function Header() {
             >
               Resume <span className="arrow">↗</span>
             </a>
+            <ThemeToggle />
 
             <button
               ref={burgerRef}
@@ -203,9 +191,6 @@ export default function Header() {
               aria-expanded={open}
               className="group lg:hidden grid place-items-center w-11 h-11 rounded-full bg-[var(--surface-2)] hover:bg-[var(--surface-3)] transition-colors z-50 relative"
             >
-              {/* Two bars rather than three: they converge on the centre line
-                  and cross, so the open and closed states are the same two
-                  elements rotated — nothing appears or disappears. */}
               <span className="flex flex-col items-center gap-[6px]">
                 <span
                   data-bar
@@ -220,7 +205,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Scroll progress bar — a read-position indicator, not a divider. */}
         <div
           ref={progressRef}
           className="h-[2px] bg-[linear-gradient(90deg,var(--accent-deep),var(--accent))] origin-left rounded-full"
@@ -228,7 +212,6 @@ export default function Header() {
         />
       </nav>
 
-      {/* Fullscreen mobile overlay */}
       <div
         ref={menuRef}
         className="fixed inset-0 z-40 bg-[var(--bg)] flex-col justify-center px-[var(--gutter)] lg:hidden"

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { SplitReveal, FadeUp } from "../Component/Anim";
 import portrait from "../assets/images/output.webp";
 
-/** Capability areas, drawn from what the experience section actually lists. */
 const CAPABILITIES = [
   {
     n: "01",
@@ -43,7 +42,6 @@ const FACTS = [
 export default function AboutContent() {
   return (
     <>
-      {/* Page head */}
       <section className="pt-28 pb-12 md:pt-36 md:pb-16">
         <div className="shell">
           <FadeUp y={16} duration={0.6} className="mb-8">
@@ -133,7 +131,6 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* What I actually do */}
       <section className="section">
         <div className="shell">
           <div className="section-head">
@@ -180,7 +177,6 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* Away from the editor */}
       <section className="section">
         <div className="shell">
           <div className="section-head">

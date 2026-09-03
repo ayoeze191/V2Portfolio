@@ -25,11 +25,6 @@ const SOCIALS = [
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
-  /**
-   * No backend on this site, so the form composes a prefilled email in the
-   * visitor's own client rather than pretending to submit somewhere.
-   * Swap this for a POST to an API route if you add one later.
-   */
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const subject = encodeURIComponent(`Portfolio enquiry from ${form.name}`);
@@ -49,7 +44,6 @@ export default function Contact() {
         </SplitReveal>
 
         <div className="grid lg:grid-cols-12 gap-x-14 gap-y-12">
-          {/* Direct routes */}
           <FadeUp className="lg:col-span-5 space-y-10" stagger={0.1}>
             <div>
               <p className="lede mb-6">
@@ -98,7 +92,6 @@ export default function Contact() {
             </div>
           </FadeUp>
 
-          {/* Form */}
           <FadeUp className="lg:col-span-7" y={30}>
             <form onSubmit={handleSubmit} className="space-y-8">
               <div>

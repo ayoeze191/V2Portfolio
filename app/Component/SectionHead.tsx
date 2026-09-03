@@ -2,12 +2,6 @@
 
 import { FadeUp } from "./Anim";
 
-/**
- * The numbered section header used across every section — the structural
- * device shared by esabu-blessing.xyz and anthonyokeh.com.
- *
- *   01 / ABOUT ....................................... LAGOS, NG
- */
 export default function SectionHead({
   index,
   title,

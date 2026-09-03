@@ -2,69 +2,104 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* ============================================
-   DESIGN TOKENS — borderless, green on black
-   Ground and type follow cencori.com: true black,
-   neutral near-white text, no tinted surfaces. One
-   green carries every accent — indices, hovers,
-   status — so colour stays rationed and deliberate.
+/* ─────────────────────────────────────────────────────────────
+   Palette: cool porcelain + ink navy, accented in vivid azure.
+   Layout rhythm (eyebrow → heading → intro → grid) from maazscript.
+   Every colour lives here — components reference tokens only, so the
+   whole scheme is one edit away from a different mood.
+   ───────────────────────────────────────────────────────────── */
 
-   There are no rules or borders in this system.
-   Structure comes from stacked surfaces, radius and
-   whitespace — a hairline is never used to separate
-   two things that a gap can separate instead.
-   ============================================ */
 :root {
-  /* Elevation ladder. Each step is a flat fill on top of black; nothing is
-     tinted, so surfaces read as light level rather than as colour. */
-  --bg: #000000;
-  --surface: #0b0b0b;
-  --surface-2: #151515;
-  --surface-3: #1f1f1f;
-  --surface-4: #2b2b2b;
+  --bg: #f3f7fc;
+  --surface: #edf2fa;
+  --surface-2: #e5ecf7;
+  --surface-3: #d9e3f2;
+  --surface-4: #c6d3e6;
+  --elevated: #ffffff;
 
-  /* Text — neutral greys. Hierarchy is value alone. */
-  --fg: #fafafa;
-  --fg-muted: #a1a1a1;
-  --fg-faint: #6b6b6b;
+  --fg: #0a1a2f;
+  --fg-muted: #4b5e78;
+  --fg-faint: #75859d;
 
-  /* Emphasis — a single green, two stops, against the black.
-     lab(75.0771% -60.7313 19.4147) and lab(55.0481% -49.9246 15.93). */
-  --accent: #00d393;
-  --accent-deep: #009867;
-  --accent-soft: rgba(0, 211, 147, 0.12);
+  --accent: #1f61e8;
+  --accent-deep: #1546b6;
+  --accent-soft: #b6cbf8;
+  --accent-tint: rgba(31, 97, 232, 0.1);
+  /* Text/icons that sit on top of an accent fill. */
+  --on-accent: #ffffff;
 
-  /* Status shares the accent hue — availability, live deployments. */
   --signal: var(--accent);
-  --signal-soft: rgba(0, 211, 147, 0.18);
+  --signal-soft: rgba(31, 97, 232, 0.22);
 
-  /* Radius scale — the shape language that replaces the old hairlines. */
+  --border: #d7e1ef;
+  --border-soft: rgba(10, 26, 47, 0.08);
+
   --radius-sm: 10px;
   --radius: 16px;
   --radius-lg: 24px;
+  --radius-xl: 32px;
   --radius-pill: 999px;
 
-  /* Depth for anything that genuinely floats above the page. */
-  --shadow-float: 0 18px 50px rgba(0, 0, 0, 0.65);
+  --shadow-sm: 0 1px 2px rgba(10, 26, 47, 0.06);
+  --shadow: 0 4px 16px rgba(10, 26, 47, 0.07);
+  --shadow-lg: 0 18px 44px rgba(10, 26, 47, 0.12);
+  --shadow-accent: 0 18px 44px rgba(31, 97, 232, 0.22);
 
-  /* Fonts (wired to next/font variables in layout.tsx) */
+  /* Each derives from a differently-named next/font variable — a custom
+     property that references itself is invalid and drops the font silently. */
   --font-body: var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-display), system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  /* Motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --gutter: clamp(1.25rem, 5vw, 4rem);
 
-  /* Page gutter, shared by every section so edges line up vertically */
-  --gutter: clamp(1.25rem, 5vw, 5rem);
+  color-scheme: light;
 }
 
-/* ============================================
-   BASE
-   ============================================ */
+/* ── Dark: the same blueprint at midnight ───────────────────────
+   An inline script in layout.tsx resolves the stored choice (or the OS
+   preference) onto <html data-theme> before first paint, so this single
+   block covers both an explicit pick and "follow system" — no flash,
+   and no second copy of the palette to keep in sync. */
+
+:root[data-theme="dark"] {
+  --bg: #070e1c;
+  --surface: #0b1425;
+  --surface-2: #111c30;
+  --surface-3: #17243b;
+  --surface-4: #26364f;
+  --elevated: #0d1728;
+
+  --fg: #e9f1fc;
+  --fg-muted: #9fb1c9;
+  --fg-faint: #71829c;
+
+  --accent: #5d94ff;
+  /* Hover goes *lighter* here — deepening it would sink into the page. */
+  --accent-deep: #85afff;
+  --accent-soft: #2c4b85;
+  --accent-tint: rgba(93, 148, 255, 0.14);
+  --on-accent: #05101f;
+
+  --signal: #5d94ff;
+  --signal-soft: rgba(93, 148, 255, 0.26);
+
+  --border: #1c2b45;
+  --border-soft: rgba(233, 241, 252, 0.1);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 18px 44px rgba(0, 0, 0, 0.55);
+  --shadow-accent: 0 18px 44px rgba(93, 148, 255, 0.24);
+
+  color-scheme: dark;
+}
+
 html {
-  /* Lenis drives scrolling; native smooth scroll would fight it. */
-  scroll-behavior: auto;
+  /* Native smooth scrolling — no JS scroll hijacking, so an idle page
+     costs zero frames. */
+  scroll-behavior: smooth;
 }
 
 body {
@@ -73,6 +108,9 @@ body {
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  transition:
+    background-color 0.35s var(--ease-out),
+    color 0.35s var(--ease-out);
 }
 
 h1,
@@ -80,8 +118,8 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--fg);
   text-wrap: balance;
 }
@@ -91,20 +129,19 @@ p {
 }
 
 section {
-  scroll-margin-top: 80px;
+  scroll-margin-top: 88px;
 }
 
 ::selection {
   background: var(--accent);
-  color: #000;
+  color: var(--on-accent);
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: var(--surface);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--surface-4);
@@ -114,76 +151,180 @@ section {
   background: var(--fg-faint);
 }
 
-/* The one intentional outline on the site: a keyboard focus ring, which is an
-   accessibility affordance rather than a decorative rule. */
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
 
-/* SplitText writes inline styles; this keeps masked lines clipped correctly. */
-.split-mask {
-  overflow: hidden;
-  display: block;
-}
+/* ── Layout ─────────────────────────────────────────────────── */
 
-/* ============================================
-   LAYOUT PRIMITIVES
-   ============================================ */
-.shell {
+.wrap {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1180px;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
-/* Sections are separated by breathing room and their own heading, never a rule. */
-.section {
-  padding-block: clamp(5.5rem, 13vh, 10rem);
+.shell {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-/* A content block. Spacing only — no fill, so nothing reads as a box.
-   Blocks are told apart by the whitespace around them and by type hierarchy. */
+.section {
+  padding-block: clamp(4rem, 9vw, 7.5rem);
+}
+
+/* First section after the hero. The hero already closes on a bordered strip,
+   so the full rhythm above it reads as a hole in the page. */
+.section-lead {
+  padding-block-start: clamp(2.75rem, 5vw, 4.25rem);
+}
+
 .panel {
   padding-block: clamp(1.25rem, 2.5vw, 1.75rem);
 }
 
-/* ============================================
-   TYPE SCALE
-   Oversized, all-caps, tightly tracked.
-   ============================================ */
+/* ── Hero backdrop ───────────────────────────────────────────────
+   Layered static gradients: an azure bloom off the top-left, a cooler
+   answer at the right, and a paper shift that dissolves into the page.
+   Painted once, no filters and no per-frame work. */
+.hero-wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Absolute children paint above static in-flow siblings, which would bury
+     the strip at the foot of the hero. The section carries `isolate`, so a
+     negative index stays inside it. */
+  z-index: -1;
+  background:
+    radial-gradient(
+      58rem 34rem at 12% -14%,
+      color-mix(in srgb, var(--accent) 24%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      40rem 26rem at 95% 4%,
+      color-mix(in srgb, var(--accent) 13%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(to bottom, var(--surface), var(--bg) 60%);
+}
+
+/* Hairline arcs that echo the bloom — one border, no extra elements. */
+.hero-ring {
+  position: absolute;
+  left: 50%;
+  border-radius: 50%;
+  border: 1px solid var(--border-soft);
+  pointer-events: none;
+  translate: -50% 0;
+  z-index: -1;
+}
+
+/* Ink at the top, drifting toward accent at the baseline. */
+.ink-sheen {
+  background: linear-gradient(
+    170deg,
+    var(--fg) 34%,
+    color-mix(in srgb, var(--fg) 42%, var(--accent))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Type ───────────────────────────────────────────────────── */
+
 .display {
   font-family: var(--font-display);
-  font-weight: 700;
-  text-transform: uppercase;
+  font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 0.88;
-  font-size: clamp(2.75rem, 11vw, 10rem);
+  font-size: clamp(3.5rem, 15vw, 12rem);
 }
 
 .display-md {
   font-family: var(--font-display);
-  font-weight: 700;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  font-size: clamp(2rem, 5.2vw, 3.75rem);
+}
+
+.h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-size: clamp(1.9rem, 4.6vw, 3.25rem);
+}
+
+.h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  color: var(--fg);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 600;
   letter-spacing: -0.035em;
-  line-height: 0.94;
-  font-size: clamp(2rem, 6vw, 4.5rem);
+  line-height: 1.05;
+  font-size: clamp(1.7rem, 6vw, 2.25rem);
+  color: var(--fg);
+}
+
+/* The reference picks key words out of the headline in accent italic. */
+.wonk {
+  font-style: italic;
+  color: var(--accent);
 }
 
 .lede {
-  font-size: clamp(1.05rem, 1.9vw, 1.6rem);
-  line-height: 1.5;
+  font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+  line-height: 1.65;
   color: var(--fg-muted);
-  max-width: 46ch;
+  max-width: 58ch;
 }
 
-/* ============================================
-   MONO SYSTEM — labels, indices, metadata.
-   ============================================ */
+.body {
+  font-size: 0.9688rem;
+  line-height: 1.75;
+  color: var(--fg-muted);
+}
+
+.body-sm {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--fg-muted);
+}
+
+.hl {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.accent {
+  color: var(--accent);
+}
+
 .mono {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--fg-faint);
@@ -191,14 +332,46 @@ section {
 
 .mono-accent {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
-/* Numbered section header. The index sits in a filled tag, which does the job
-   the old underline did without drawing a line across the page. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+/* ── Section head: eyebrow → heading → intro ────────────────── */
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-tint);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.85rem;
+}
+
 .section-head {
   display: flex;
   align-items: center;
@@ -210,7 +383,7 @@ section {
   font-size: 0.68rem;
   letter-spacing: 0.14em;
   color: var(--accent);
-  background: var(--surface-2);
+  background: var(--accent-tint);
   padding: 0.4rem 0.65rem;
   border-radius: var(--radius-sm);
 }
@@ -219,7 +392,6 @@ section {
   font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  /* The filled index carries the emphasis, so the label steps back a tone. */
   color: var(--fg-muted);
 }
 .section-head .aside {
@@ -231,17 +403,137 @@ section {
   text-transform: uppercase;
 }
 
-/* ============================================
-   ARROW-LED LINKS
-   Soft filled pills. The arrow is the affordance,
-   and it slides on hover.
-   ============================================ */
-.link-arrow {
+/* ── Surfaces ───────────────────────────────────────────────── */
+
+.card {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.4rem, 2.6vw, 2rem);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow 0.4s var(--ease-out),
+    transform 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out);
+}
+@media (hover: hover) {
+  .card:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-soft);
+    transform: translateY(-3px);
+  }
+}
+
+.card-flat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.4rem, 2.6vw, 2rem);
+}
+
+.hairline {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: var(--border);
+}
+
+/* ── Controls ───────────────────────────────────────────────── */
+
+.btn {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  padding: 0.8rem 1.4rem;
+  transition:
+    background-color 0.3s var(--ease-out),
+    color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+.btn .arrow {
+  transition: transform 0.35s var(--ease-out);
+}
+.btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--shadow);
+}
+.btn-primary:hover {
+  background: var(--accent-deep);
+  box-shadow: var(--shadow-accent);
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  background: var(--surface-2);
+  border-color: var(--fg-faint);
+}
+
+/* Fixed bar on the sub-pages: transparent at the top of the page, solid
+   once you're past the fold. Colours come from tokens so it follows theme. */
+.site-nav {
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color 0.4s var(--ease-out),
+    border-color 0.4s var(--ease-out);
+}
+.site-nav.nav-solid {
+  background-color: var(--bg);
+  border-bottom-color: var(--border);
+}
+
+/* Square-ish icon control: theme toggle, menu button. */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--elevated);
+  color: var(--fg-muted);
+  box-shadow: var(--shadow-sm);
+  transition:
+    color 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out),
+    background-color 0.25s var(--ease-out);
+}
+.icon-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent-soft);
+  background: var(--accent-tint);
+}
+
+/* The icon pair is swapped by attribute, so it is correct on first paint. */
+.theme-toggle .icon-dark,
+:root[data-theme="dark"] .theme-toggle .icon-light {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle .icon-dark {
+  display: block;
+}
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--fg);
@@ -256,28 +548,55 @@ section {
   transition: transform 0.35s var(--ease-out);
 }
 .link-arrow:hover {
-  background: var(--surface-3);
+  background: var(--accent-tint);
   color: var(--accent);
 }
 .link-arrow:hover .arrow {
-  transform: translateX(5px);
+  transform: translateX(4px);
 }
 
-/* ============================================
-   STATUS PILL — availability marker
-   ============================================ */
+.inline-link {
+  color: var(--fg);
+  border-bottom: 1px solid var(--surface-4);
+  padding-bottom: 1px;
+  transition:
+    color 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
+}
+.inline-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  transition: color 0.25s var(--ease-out);
+}
+.social:hover {
+  color: var(--accent);
+}
+
 .status {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--fg-muted);
-  background: var(--surface-2);
+  background: var(--elevated);
+  border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   padding: 0.5rem 1rem;
+  box-shadow: var(--shadow-sm);
 }
 .status .dot {
   width: 6px;
@@ -293,39 +612,112 @@ section {
   }
 }
 
-/* ============================================
-   CHIPS / TAGS
-   ============================================ */
 .chip {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fg-muted);
-  background: var(--surface-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-pill);
-  padding: 0.3rem 0.7rem;
+  padding: 0.32rem 0.72rem;
   white-space: nowrap;
   transition:
     background-color 0.25s var(--ease-out),
-    color 0.25s var(--ease-out);
+    color 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
 }
 .chip:hover {
-  background: var(--surface-4);
+  background: var(--accent-tint);
+  border-color: var(--accent-soft);
   color: var(--accent);
 }
 
-/* ============================================
-   EDITORIAL ROW — the project + experience list item.
-   Formerly a hairline-separated row; now a soft card
-   that lifts on hover. Lists space them with a gap.
-   ============================================ */
+.field {
+  width: 100%;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  color: var(--fg);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition:
+    border-color 0.3s var(--ease-out),
+    box-shadow 0.3s var(--ease-out);
+}
+.field::placeholder {
+  color: var(--fg-faint);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+/* ── Numbered rows (experience, process, archive) ───────────── */
+
+.step-num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem 1.5rem;
+  padding-block: 1.35rem;
+}
+@media (min-width: 640px) {
+  .entry {
+    grid-template-columns: 7.5rem 1fr;
+  }
+}
+.entry + .entry {
+  border-top: 1px solid var(--border);
+}
+
+.entry-when {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-faint);
+  white-space: nowrap;
+  padding-top: 0.3rem;
+}
+
+.entry-link {
+  display: block;
+  border-radius: var(--radius);
+  margin-inline: -0.85rem;
+  padding: 0.5rem 0.85rem;
+  transition: background-color 0.3s var(--ease-out);
+}
+@media (hover: hover) {
+  .entry-link:hover {
+    background: var(--surface-2);
+  }
+}
+.entry-link .go {
+  display: inline-block;
+  color: var(--fg-faint);
+  transition:
+    transform 0.3s var(--ease-out),
+    color 0.3s var(--ease-out);
+}
+@media (hover: hover) {
+  .entry-link:hover .go {
+    color: var(--accent);
+    transform: translate(2px, -2px);
+  }
+}
+
 .row {
   position: relative;
   display: block;
-  /* No resting fill: rows sit straight on the black and are separated by
-     generous padding. The fill only appears under the cursor. */
-  background: transparent;
   border-radius: var(--radius);
   padding: clamp(1.5rem, 3.2vw, 2.25rem) clamp(1rem, 2.2vw, 1.5rem);
   transition:
@@ -334,7 +726,7 @@ section {
 }
 @media (hover: hover) {
   .row:hover {
-    background: var(--surface);
+    background: var(--surface-2);
   }
 }
 .row .row-index {
@@ -355,7 +747,6 @@ section {
   }
 }
 
-/* Floating preview image that tracks the cursor over project rows. */
 .row-preview {
   position: fixed;
   top: 0;
@@ -368,11 +759,10 @@ section {
   overflow: hidden;
   border-radius: var(--radius);
   background: var(--surface-2);
-  box-shadow: var(--shadow-float);
+  box-shadow: var(--shadow-lg);
   will-change: transform;
 }
 
-/* Media wells — images sit in a filled, rounded well instead of a frame. */
 .media {
   position: relative;
   overflow: hidden;
@@ -380,9 +770,6 @@ section {
   background: var(--surface-2);
 }
 
-/* ============================================
-   STACK GRID — filled tiles, spaced by a gap.
-   ============================================ */
 .stack-cell {
   position: relative;
   display: flex;
@@ -390,7 +777,6 @@ section {
   justify-content: space-between;
   aspect-ratio: 1;
   padding: 0.85rem;
-  background: transparent;
   border-radius: var(--radius-sm);
   transition:
     background-color 0.3s var(--ease-out),
@@ -420,15 +806,9 @@ section {
   color: var(--accent);
 }
 
-/* ============================================
-   MARQUEE
-   Solid tones rather than outlined type — an
-   outline is still a line.
-   ============================================ */
 .marquee-item {
   font-family: var(--font-display);
-  font-weight: 700;
-  text-transform: uppercase;
+  font-weight: 600;
   letter-spacing: -0.02em;
   font-size: clamp(1.75rem, 4.5vw, 3.5rem);
   color: var(--surface-4);
@@ -439,33 +819,22 @@ section {
   color: var(--fg-faint);
 }
 
-/* ============================================
-   FORM FIELDS — filled, not underlined.
-   ============================================ */
-.field {
-  width: 100%;
-  background: var(--surface-2);
-  border: 0;
-  border-radius: var(--radius-sm);
-  padding: 0.9rem 1.05rem;
-  color: var(--fg);
-  font-size: 1rem;
-  font-family: inherit;
-  transition: background-color 0.3s var(--ease-out);
-}
-.field::placeholder {
-  color: var(--fg-faint);
-}
-.field:focus {
-  outline: none;
-  background: var(--surface-3);
-  /* A soft ring, so focus stays obvious without reintroducing a border. */
-  box-shadow: 0 0 0 2px var(--accent-deep);
+/* Edge-masked strip, as on the reference's logo rail. */
+.mask-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
 }
 
-/* ============================================
-   MOTION SAFETY
-   ============================================ */
+.split-mask {
+  overflow: hidden;
+  display: block;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -475,6 +844,72 @@ section {
     transition-duration: 0.01ms !important;
   }
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+  }
+}
+
+/* ── Case study ─────────────────────────────────────────────── */
+
+.case-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  font-size: clamp(2.75rem, 8vw, 6.5rem);
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+/* The cover sits on its own bloom so a light screenshot doesn't float. */
+.case-cover {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: var(--surface-2);
+}
+.case-cover::before {
+  content: "";
+  position: absolute;
+  inset: -30% -10% auto;
+  height: 60%;
+  z-index: -1;
+  background: radial-gradient(
+    50% 60% at 50% 50%,
+    color-mix(in srgb, var(--accent) 30%, transparent),
+    transparent 70%
+  );
+}
+
+.case-feature {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: 0.5rem 1rem;
+  align-items: baseline;
+  padding-block: 0.95rem;
+  border-top: 1px solid var(--border);
+}
+
+.case-jump {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.25rem, 2.4vw, 1.75rem);
+  background: var(--surface);
+  transition:
+    background-color 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+@media (hover: hover) {
+  .case-jump:hover {
+    background: var(--elevated);
+    border-color: var(--accent-soft);
+    transform: translateY(-2px);
+  }
+  .case-jump:hover .h3 {
+    color: var(--accent);
   }
 }

@@ -12,7 +12,6 @@ const SHIPPED = projects.filter((p) => p.live).length;
 export default function Archive() {
   return (
     <>
-      {/* Page head — same anatomy as the home hero, one notch quieter. */}
       <section className="pt-28 pb-12 md:pt-36 md:pb-16">
         <div className="shell">
           <FadeUp y={16} duration={0.6} className="mb-8">
@@ -45,7 +44,6 @@ export default function Archive() {
               </div>
               <div>
                 <p className="mono mb-1.5">Live</p>
-                {/* The one place chroma is allowed: an actual status signal. */}
                 <p className="text-sm text-[var(--fg)] tabular-nums flex items-center gap-2">
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--signal)]" />
                   {SHIPPED}

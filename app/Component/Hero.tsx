@@ -17,7 +17,6 @@ export default function Hero() {
     () => {
       const reduced = prefersReducedMotion();
 
-      // Reduced motion: reveal everything immediately, no entrance choreography.
       if (reduced) {
         gsap.set("[data-anim]", { opacity: 1 });
         return;
@@ -42,7 +41,6 @@ export default function Hero() {
           opacity: 0,
           duration: 0.8,
         })
-          // The headline reads left-to-right, character by character.
           .from(
             splits.flatMap((s) => s.chars),
             { yPercent: 110, duration: 1.2, stagger: 0.022 },
@@ -59,8 +57,6 @@ export default function Hero() {
             "-=0.7",
           );
 
-        // The headline drifts up slightly slower than the page — subtle depth,
-        // no pinning, so it never blocks reading.
         gsap.to("[data-hero-title]", {
           yPercent: -14,
           ease: "none",
@@ -93,12 +89,9 @@ export default function Hero() {
     <section
       ref={root}
       id="hero"
-      /* Mobile: natural height so content sits just under the header.
-         md+: full viewport with content anchored to the bottom edge. */
       className="flex flex-col justify-end pt-24 pb-12 md:min-h-svh md:pt-32 md:pb-10"
     >
       <div className="shell w-full">
-        {/* Availability marker — esabu-blessing.xyz's "Available Q3" cue */}
         <div className="overflow-hidden mb-8">
           <div data-anim data-hero-eyebrow style={{ opacity: 0 }}>
             <span className="status">
@@ -108,7 +101,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Oversized display headline */}
         <h1 data-hero-title className="display mb-8">
           <span
             data-anim
@@ -156,7 +148,6 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Metadata column — the reference sites all anchor the hero with facts */}
           <div
             data-anim
             data-hero-meta
@@ -182,7 +173,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Scroll cue */}
         <div data-hero-cue className="mt-16 flex items-center justify-between">
           <span className="mono flex items-center gap-2">
             Scroll

@@ -3,15 +3,26 @@
 import SectionHead from "./SectionHead";
 import { SplitReveal, FadeUp, Counter } from "./Anim";
 
-/**
- * Figures are derived from the Experience + Projects data on this site, not
- * invented — update them here when either of those changes.
- */
 const METRICS = [
   { value: 4, suffix: "+", label: "Years building", note: "Since 2021" },
-  { value: 5, suffix: "", label: "Teams shipped with", note: "Startup to scale-up" },
-  { value: 11, suffix: "", label: "Services in production", note: "Node · Django" },
-  { value: 3, suffix: "", label: "Datastores in anger", note: "Postgres · Mongo · Redis" },
+  {
+    value: 5,
+    suffix: "",
+    label: "Teams shipped with",
+    note: "Startup to scale-up",
+  },
+  {
+    value: 11,
+    suffix: "",
+    label: "Services in production",
+    note: "Node · Django",
+  },
+  {
+    value: 3,
+    suffix: "",
+    label: "Datastores in anger",
+    note: "Postgres · Mongo · Redis",
+  },
 ];
 
 const PRINCIPLES = [
@@ -38,13 +49,11 @@ export default function About() {
       <div className="shell">
         <SectionHead index="01" title="About" aside="Lagos, Nigeria" />
 
-        {/* Manifesto — philosophy before credentials, per anthonyokeh.com */}
         <SplitReveal as="h2" className="display-md max-w-[18ch] mb-14">
           Full stack, with a bias for systems that scale.
         </SplitReveal>
 
         <div className="grid lg:grid-cols-12 gap-x-12 gap-y-14">
-          {/* Bio */}
           <FadeUp className="lg:col-span-7 space-y-5" stagger={0.1}>
             <p className="text-[15px] leading-relaxed">
               I&apos;m Ezekiel — a full-stack engineer. I build the whole thing:
@@ -60,9 +69,9 @@ export default function About() {
               services behind it — listings, search, and the workflows that hang
               off them. Before that: Learnpally, RentAnything and EkoPages,
               where I owned features end to end, including the parts products
-              quietly die on — Paystack and Stripe reconciliation, JWT and
-              OAuth 2.0, role-based access control, BullMQ workers, and push
-              delivery that fires once instead of four times.
+              quietly die on — Paystack and Stripe reconciliation, JWT and OAuth
+              2.0, role-based access control, BullMQ workers, and push delivery
+              that fires once instead of four times.
             </p>
             <p className="text-[15px] leading-relaxed">
               Owning both ends is the point: I design the data model and the
@@ -73,24 +82,24 @@ export default function About() {
               layer rather than in components, and slow work pushed onto a queue
               before it starts costing anyone a request.
             </p>
-
             <div className="pt-3">
-              <a href="/eazycv.pdf" target="_blank" rel="noopener noreferrer" className="link-arrow">
+              <a
+                href="/eazycv.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-arrow"
+              >
                 Download résumé <span className="arrow">↗</span>
               </a>
             </div>
           </FadeUp>
 
-          {/* Metrics — quantified impact, per anthonyokeh.com */}
           <FadeUp
             className="lg:col-span-5 grid grid-cols-2 gap-x-8 gap-y-9"
             stagger={0.08}
           >
             {METRICS.map((m) => (
-              <div
-                key={m.label}
-                className="pr-4"
-              >
+              <div key={m.label} className="pr-4">
                 <p className="font-[family-name:var(--font-display)] text-4xl font-bold tracking-tight text-[var(--fg)]">
                   <Counter to={m.value} suffix={m.suffix} />
                 </p>
@@ -105,7 +114,6 @@ export default function About() {
           </FadeUp>
         </div>
 
-        {/* Principles */}
         <FadeUp
           className="grid md:grid-cols-3 gap-x-10 gap-y-10 mt-20"
           stagger={0.1}

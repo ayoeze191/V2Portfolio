@@ -2,18 +2,10 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { gsap, useGSAP, EASE, prefersReducedMotion } from "@/app/lib/gsap";
 import type { Project } from "../data/projects";
 
-/**
- * The editorial project list, shared by the home page and the archive.
- *
- * Two modes, one row layout:
- *   default     — the whole row links out to the live site, and a preview
- *                 image tracks the cursor (home page).
- *   expandable  — the row is a disclosure that opens onto the screenshot and
- *                 long-form notes (/projects).
- */
 export default function WorkList({
   items,
   expandable = false,
@@ -26,20 +18,17 @@ export default function WorkList({
   const [active, setActive] = useState<number | null>(null);
   const [open, setOpen] = useState<number | null>(null);
 
-  /* Cursor-tracking preview: quickTo keeps it buttery without a listener storm. */
   useGSAP(
     () => {
       const preview = previewRef.current;
       if (!preview || expandable || prefersReducedMotion()) return;
 
-      // Only meaningful for real pointers — skip entirely on touch.
       if (!window.matchMedia("(hover: hover)").matches) return;
 
       const xTo = gsap.quickTo(preview, "x", { duration: 0.55, ease: "power3" });
       const yTo = gsap.quickTo(preview, "y", { duration: 0.55, ease: "power3" });
 
       const onMove = (e: MouseEvent) => {
-        // Offset so the panel sits beside the cursor, not under it.
         xTo(e.clientX + 28);
         yTo(e.clientY - 100);
       };
@@ -51,7 +40,6 @@ export default function WorkList({
     { scope: root },
   );
 
-  /* Fade the preview in and out as rows are entered and left. */
   useGSAP(
     () => {
       const preview = previewRef.current;
@@ -67,7 +55,6 @@ export default function WorkList({
     { dependencies: [active] },
   );
 
-  /* Row-by-row entrance. */
   useGSAP(
     () => {
       gsap.set("[data-work-row]", { opacity: 1 });
@@ -106,7 +93,6 @@ export default function WorkList({
         ))}
       </div>
 
-      {/* Floating cursor preview — desktop only, driven by gsap.quickTo */}
       {!expandable && (
         <div
           ref={previewRef}
@@ -152,7 +138,6 @@ function Row({
   const rowRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Animate the disclosure to its natural height, so content can be any length.
   useGSAP(
     () => {
       const panel = panelRef.current;
@@ -202,7 +187,6 @@ function Row({
         {expandable ? (isOpen ? "−" : "+") : item.live ? "↗" : ""} {item.year}
       </span>
 
-      {/* Touch devices get an inline thumbnail instead of the hover preview. */}
       {!expandable && item.image && (
         <div className="col-span-12 mt-4 md:hidden media aspect-[3/2]">
           <Image
@@ -262,7 +246,6 @@ function Row({
   );
 }
 
-/** The long-form half of an archive row, revealed on expand. */
 function ProjectDetail({ item }: { item: Project }) {
   const { detail } = item;
 
@@ -328,6 +311,12 @@ function ProjectDetail({ item }: { item: Project }) {
               </span>
             ))}
           </div>
+        </div>
+
+        <div className="flex flex-wrap gap-x-8 gap-y-3 pt-1">
+          <Link href={`/projects/${item.slug}`} className="link-arrow">
+            Read case study <span className="arrow">→</span>
+          </Link>
         </div>
 
         {(item.live || item.github) && (

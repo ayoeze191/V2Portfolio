@@ -1,24 +1,27 @@
-import About from "./Component/About";
-import Contact from "./Component/Contact";
-import Experience from "./Component/Experience";
-import Header from "./Component/Header";
-import Hero from "./Component/Hero";
-import Projects from "./Component/Projects";
-import Recommendations from "./Component/Recomendation";
-import TechStack from "./Component/TechStack";
+import Nav from "./Component/home/Nav";
+import Hero from "./Component/home/Hero";
+import About from "./Component/home/About";
+import Process from "./Component/home/Process";
+import Experience from "./Component/home/Experience";
+import Work from "./Component/home/Work";
+import Stack from "./Component/home/Stack";
+import Currently from "./Component/home/Currently";
+import Contact from "./Component/home/Contact";
+import SiteFooter from "./Component/home/SiteFooter";
 
 export default function Home() {
   return (
-    <main id="top" className="min-h-screen">
-      <Header />
+    <main className="min-h-screen">
+      <Nav />
       <Hero />
-      {/* Section numbering below matches the nav indices in Header.tsx */}
       <About />
+      <Process />
       <Experience />
-      <Projects />
-      <TechStack />
-      <Recommendations />
+      <Work />
+      <Stack />
+      <Currently />
       <Contact />
+      <SiteFooter />
     </main>
   );
 }

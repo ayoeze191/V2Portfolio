@@ -32,7 +32,6 @@ import { FaMobileAlt, FaPython } from "react-icons/fa";
 
 type Tech = { name: string; icon: ElementType };
 
-/** Grouped the way dorisfaki.tech splits competence, numbered the way anthonyokeh.com does. */
 const GROUPS: { label: string; items: Tech[] }[] = [
   {
     label: "Frontend & Mobile",
@@ -75,10 +74,6 @@ const GROUPS: { label: string; items: Tech[] }[] = [
   },
 ];
 
-/**
- * Numbering runs continuously across groups (01 … 24). Precomputed rather than
- * incremented during render — a render-time counter is not idempotent.
- */
 const GROUP_OFFSETS = GROUPS.reduce<number[]>((acc, group, i) => {
   acc.push(i === 0 ? 0 : acc[i - 1] + GROUPS[i - 1].items.length);
   return acc;
@@ -109,7 +104,6 @@ export default function TechStack() {
 
       gsap.set("[data-cell]", { opacity: 1 });
 
-      // Cells pop in per-group, so each block reads as its own unit.
       gsap.utils.toArray<HTMLElement>("[data-group]").forEach((group) => {
         gsap.from(group.querySelectorAll("[data-cell]"), {
           opacity: 0,
@@ -166,7 +160,6 @@ export default function TechStack() {
         </div>
       </div>
 
-      {/* Full-bleed marquee — the one piece of pure motion in this section */}
       <div className="mt-20 py-6">
         <Marquee speed={34}>
           {MARQUEE_WORDS.map((word, i) => (
