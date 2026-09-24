@@ -38,7 +38,7 @@ export const projects: Project[] = [
     summary:
       "Digital savings circles with Naira wallets, a double-entry ledger, Paystack funding, and automated payout rounds.",
     tech: ["TypeScript", "PostgreSQL", "Paystack", "Double-entry Ledger"],
-    live: "https://neon-salmiakki-04c60d.netlify.app/",
+    live: "https://eazyajo.netlify.app/",
     image: ajoShot,
     featured: true,
     detail: {
@@ -89,7 +89,14 @@ export const projects: Project[] = [
     year: "2024",
     summary:
       "E-learning platform across web and mobile. Course management, Paystack payments, background jobs for email and video processing, and PostHog analytics.",
-    tech: ["React", "React Native", "Node.js", "Express", "MongoDB", "Paystack"],
+    tech: [
+      "React",
+      "React Native",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "Paystack",
+    ],
     live: "https://learn.learnpally.com",
     image: learnpally,
     featured: true,
