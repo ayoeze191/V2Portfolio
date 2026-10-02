@@ -83,6 +83,28 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: "luideo",
+    title: "Lui'Deo",
+    role: "Freelance Developer",
+    year: "2026",
+    summary:
+      "E-commerce store for a Lagos jewellery house making handmade coral, pearl, and stone pieces for Nigerian weddings and celebrations.",
+    tech: ["Next.js", "Paystack"],
+    live: "https://luideo.vercel.app/",
+    featured: true,
+    detail: {
+      body: "Lui'Deo makes every piece to order, so the store has to do more than list stock: it lets brides and guests browse by material and collection, ask for pieces matched to their outfit, and pay in the way Nigerian customers actually pay.",
+      features: [
+        "Shop organised by material — coral, pearl, stones, bridal sets, earrings, and wrist pieces",
+        "Named collections: Ìyàwó, Olóri, Heritage, and Everyday",
+        "Custom order flow, with WhatsApp consultation for outfit matching",
+        "Paystack checkout supporting card, bank transfer, and USSD",
+        "Customer gallery of pieces worn at real events",
+        "Nationwide delivery across Nigeria",
+      ],
+    },
+  },
+  {
     slug: "learnpally",
     title: "Learnpally",
     role: "Full-Stack Engineer",

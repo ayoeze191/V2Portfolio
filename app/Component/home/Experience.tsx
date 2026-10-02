@@ -25,6 +25,16 @@ const EXPERIENCE: Role[] = [
     tech: ["React Native", "Node.js", "TypeScript"],
   },
   {
+    company: "Renato",
+    role: "Frontend Developer (Contract)",
+    period: "Aug 2025 — Jan 2026",
+    points: [
+      "Contracted by Canada-based Renato to build Vue frontend features for Tenant, a property management platform that helps landlords manage their properties.",
+      "Worked through the ASP.NET backend codebase to understand the API contracts and integrate the frontend cleanly.",
+    ],
+    tech: ["Vue", "ASP.NET"],
+  },
+  {
     company: "Learnpally",
     role: "Full-Stack Engineer",
     period: "2024 — 2026",
