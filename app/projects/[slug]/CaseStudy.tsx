@@ -13,9 +13,11 @@ function facts(project: Project) {
     { k: "Year", v: project.year },
     {
       k: "Status",
-      v: project.live ? "Live" : project.github ? "Open source" : "Archived",
+      v:
+        project.status ??
+        (project.live ? "Live" : project.github ? "Open source" : "Archived"),
     },
-    { k: "Stack", v: project.tech.slice(0, 2).join(" · ") },
+    { k: "Stack", v: project.tech.slice(0, 3).join(" · ") },
   ];
 }
 
@@ -31,58 +33,84 @@ export default function CaseStudy({
   const detail = project.detail;
 
   return (
-    <>
+    <main>
       {/* ── Masthead ─────────────────────────────────────────── */}
-      <section className="pt-28 pb-10 md:pt-36 md:pb-14">
-        <div className="shell">
-          <motion.div
-            initial="hidden"
-            animate="show"
-            variants={container(0.08)}
-          >
-            <motion.div variants={item} className="mb-8">
-              <Link href="/projects" className="link-arrow">
-                <span className="arrow">←</span> All projects
-              </Link>
-            </motion.div>
-
-            <motion.div variants={item} className="mb-5">
-              <span className="eyebrow">Case study</span>
-            </motion.div>
-
-            <motion.h1 variants={item} className="case-title">
-              {project.title}
-            </motion.h1>
-
-            <motion.p variants={item} className="lede mt-7">
-              {project.summary}
-            </motion.p>
-
-            <motion.div
-              variants={item}
-              className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-7 border-y border-[var(--border)] py-6"
-            >
-              {facts(project).map((f) => (
-                <div key={f.k}>
-                  <p className="mono">{f.k}</p>
-                  <p className="heading mt-1.5">{f.v}</p>
-                </div>
-              ))}
-            </motion.div>
+      <section className="pt-12 md:pt-20 pb-12 md:pb-16">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={container(0.07)}
+          className="wrap"
+        >
+          <motion.div variants={item}>
+            <Link href="/projects" className="link !text-[var(--fg-2)]">
+              <span className="arrow">←</span> All projects
+            </Link>
           </motion.div>
-        </div>
+
+          <motion.p variants={item} className="kicker mt-12">
+            Case study
+          </motion.p>
+
+          <motion.h1 variants={item} className="display mt-5">
+            {project.title}
+          </motion.h1>
+
+          <motion.p variants={item} className="lede mt-8 !text-[var(--fg)]">
+            {project.summary}
+          </motion.p>
+
+          <motion.dl
+            variants={item}
+            className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 pt-5 border-t border-[var(--line-strong)]"
+          >
+            {facts(project).map((f) => (
+              <div key={f.k}>
+                <dt className="kicker">{f.k}</dt>
+                <dd className="small !text-[var(--fg)] mt-1.5">{f.v}</dd>
+              </div>
+            ))}
+          </motion.dl>
+        </motion.div>
       </section>
 
       {/* ── Cover ────────────────────────────────────────────── */}
-      {project.image ? (
-        <section className="pb-14 md:pb-20">
-          <div className="shell">
-            <Reveal y={24}>
-              <div className="case-cover">
+      {project.screens?.length ? (
+        <section className="pb-16 md:pb-24">
+          <div className="wrap">
+            <Reveal y={20}>
+              <div className="well">
+                {/* Scrolls sideways on small screens; no JS, no animation. */}
+                <ul className="screens">
+                  {project.screens.map((screen, i) => (
+                    <li key={screen.label}>
+                      <div className="phone">
+                        <Image
+                          src={screen.src}
+                          alt={`${project.title} — ${screen.label} screen`}
+                          sizes="210px"
+                          className="w-full h-auto"
+                          placeholder="blur"
+                          priority={i < 3}
+                        />
+                      </div>
+                      <p className="meta mt-3 text-center">{screen.label}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      ) : project.image ? (
+        <section className="pb-16 md:pb-24">
+          <div className="wrap">
+            <Reveal y={20}>
+              <div className="well">
                 <Image
                   src={project.image}
                   alt={`${project.title} interface`}
-                  sizes="(max-width: 1180px) 100vw, 1100px"
+                  sizes="(max-width: 1240px) 100vw, 1140px"
                   className="w-full h-auto"
                   placeholder="blur"
                   priority
@@ -95,127 +123,115 @@ export default function CaseStudy({
 
       {/* ── Body ─────────────────────────────────────────────── */}
       <section className="pb-20 md:pb-28">
-        <div className="shell grid lg:grid-cols-12 gap-x-14 gap-y-14">
-          <div className="lg:col-span-7 space-y-14">
+        <div className="wrap split">
+          <aside className="split-side">
+            <div className="md:sticky md:top-[calc(var(--nav-h)+2rem)]">
+              <p className="kicker">Built with</p>
+              <ul className="mt-3 space-y-1.5">
+                {project.tech.map((t) => (
+                  <li key={t} className="small !text-[var(--fg)]">
+                    {t}
+                  </li>
+                ))}
+              </ul>
+
+              {project.live || project.github ? (
+                <div className="flex flex-col items-start gap-3 mt-8">
+                  {project.live ? (
+                    <a
+                      href={project.live}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary"
+                    >
+                      {project.liveLabel ?? "Visit site"}{" "}
+                      <span aria-hidden>↗</span>
+                    </a>
+                  ) : null}
+                  {project.github ? (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link"
+                    >
+                      View source <span className="arrow up">↗</span>
+                    </a>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          </aside>
+
+          <div className="split-main md:max-w-[720px] space-y-16">
             <div>
-              <p className="mono mb-4">Overview</p>
-              <Reveal y={16}>
-                <p className="body text-[1.02rem]">
-                  {detail?.body ?? project.summary}
-                </p>
+              <p className="kicker mb-4">Overview</p>
+              <Reveal y={12}>
+                <p className="quote">{detail?.body ?? project.summary}</p>
               </Reveal>
             </div>
 
             {detail?.features?.length ? (
               <div>
-                <p className="mono mb-1">What it does</p>
-                <motion.div
+                <p className="kicker mb-2">What it does</p>
+                <motion.ol
                   initial="hidden"
                   whileInView="show"
                   viewport={viewport}
-                  variants={container(0.06)}
+                  variants={container(0.05)}
                 >
                   {detail.features.map((f, i) => (
-                    <motion.div key={f} variants={item} className="case-feature">
-                      <span className="step-num">
+                    <motion.li key={f} variants={item} className="feature">
+                      <span className="num pt-1">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <p className="body-sm !text-[var(--fg)]">{f}</p>
-                    </motion.div>
+                      <p className="body !text-[var(--fg)]">{f}</p>
+                    </motion.li>
                   ))}
-                </motion.div>
+                </motion.ol>
               </div>
             ) : null}
 
-            {detail?.challenges || detail?.learnings ? (
-              <motion.div
-                initial="hidden"
-                whileInView="show"
-                viewport={viewport}
-                variants={container(0.08)}
-                className="grid sm:grid-cols-2 gap-4"
-              >
-                {detail?.challenges ? (
-                  <motion.div variants={item} className="card-flat">
-                    <p className="mono-accent mb-3">The hard part</p>
-                    <p className="body-sm">{detail.challenges}</p>
-                  </motion.div>
-                ) : null}
-                {detail?.learnings ? (
-                  <motion.div variants={item} className="card-flat">
-                    <p className="mono-accent mb-3">What it taught me</p>
-                    <p className="body-sm">{detail.learnings}</p>
-                  </motion.div>
-                ) : null}
-              </motion.div>
+            {detail?.challenges ? (
+              <Reveal y={12}>
+                <p className="kicker mb-4">The hard part</p>
+                <p className="body">{detail.challenges}</p>
+              </Reveal>
+            ) : null}
+
+            {detail?.learnings ? (
+              <Reveal y={12}>
+                <p className="kicker mb-4">What it taught me</p>
+                <p className="body">{detail.learnings}</p>
+              </Reveal>
             ) : null}
           </div>
-
-          {/* Sticky on desktop, a plain block on mobile. */}
-          <aside className="lg:col-span-4 lg:col-start-9">
-            <Reveal y={16} className="lg:sticky lg:top-24">
-              <div className="card">
-                <p className="mono mb-4">Built with</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {project.tech.map((t) => (
-                    <span key={t} className="chip">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                {project.live || project.github ? (
-                  <div className="flex flex-col gap-2.5 mt-7">
-                    {project.live ? (
-                      <a
-                        href={project.live}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-primary justify-center"
-                      >
-                        Visit site <span className="arrow">↗</span>
-                      </a>
-                    ) : null}
-                    {project.github ? (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-ghost justify-center"
-                      >
-                        View source <span className="arrow">↗</span>
-                      </a>
-                    ) : null}
-                  </div>
-                ) : null}
-              </div>
-            </Reveal>
-          </aside>
         </div>
       </section>
 
       {/* ── Keep reading ─────────────────────────────────────── */}
-      <section className="pb-20">
-        <div className="shell grid sm:grid-cols-2 gap-4">
-          <Reveal y={14}>
-            <Link href={`/projects/${prev.slug}`} className="case-jump">
-              <span className="mono">← Previous</span>
-              <span className="h3 mt-2 block">{prev.title}</span>
-              <span className="tag mt-1 block">{prev.role}</span>
-            </Link>
-          </Reveal>
-          <Reveal y={14} delay={0.06}>
-            <Link
-              href={`/projects/${next.slug}`}
-              className="case-jump sm:text-right"
-            >
-              <span className="mono">Next →</span>
-              <span className="h3 mt-2 block">{next.title}</span>
-              <span className="tag mt-1 block">{next.role}</span>
-            </Link>
-          </Reveal>
+      <section className="border-t border-[var(--line-strong)]">
+        <div className="wrap grid sm:grid-cols-2">
+          <Link
+            href={`/projects/${prev.slug}`}
+            className="group py-10 sm:pr-8 sm:border-r border-[var(--line)]"
+          >
+            <span className="kicker">← Previous</span>
+            <span className="h3 block mt-3 group-hover:text-[var(--accent)] transition-colors">
+              {prev.title}
+            </span>
+          </Link>
+          <Link
+            href={`/projects/${next.slug}`}
+            className="group py-10 sm:pl-8 sm:text-right border-t sm:border-t-0 border-[var(--line)]"
+          >
+            <span className="kicker">Next →</span>
+            <span className="h3 block mt-3 group-hover:text-[var(--accent)] transition-colors">
+              {next.title}
+            </span>
+          </Link>
         </div>
       </section>
-    </>
+    </main>
   );
 }

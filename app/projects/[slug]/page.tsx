@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Header from "../../Component/Header";
-import Footer from "../../Component/Footer";
+import Nav from "../../Component/site/Nav";
+import Footer from "../../Component/site/Footer";
 import { projects } from "../../data/projects";
 import CaseStudy from "./CaseStudy";
 
@@ -39,17 +39,15 @@ export default async function CaseStudyPage({ params }: Params) {
   if (index === -1) notFound();
 
   return (
-    <main id="top" className="min-h-screen">
-      <Header />
+    <>
+      <Nav />
       <CaseStudy
         project={projects[index]}
         // Wraps around, so the trail never dead-ends.
         prev={projects[(index - 1 + projects.length) % projects.length]}
         next={projects[(index + 1) % projects.length]}
       />
-      <div className="shell">
-        <Footer className="mb-12" />
-      </div>
-    </main>
+      <Footer />
+    </>
   );
 }

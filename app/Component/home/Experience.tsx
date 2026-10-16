@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import Section from "./Section";
+import SectionHead from "../site/SectionHead";
 import { container, item, viewport } from "../Reveal";
 
 type Role = {
@@ -70,53 +70,58 @@ const EXPERIENCE: Role[] = [
   },
 ];
 
+
 export default function Experience() {
   return (
-    <Section
-      id="experience"
-      eyebrow="Experience"
-      title="Where I've built."
-      intro="Four years across property, learning, marketplaces and commerce."
-    >
-      <motion.div
-        initial="hidden"
-        whileInView="show"
-        viewport={viewport}
-        variants={container(0.07)}
-      >
-        {EXPERIENCE.map((job) => (
-          <motion.div key={job.company} variants={item} className="entry">
-            <div className="entry-when">{job.period}</div>
-            <div>
-              <h3 className="h3">
-                {job.role}{" "}
-                <span className="text-[var(--fg-faint)] font-normal">·</span>{" "}
-                <span className="accent">{job.company}</span>
-              </h3>
-              <ul className="mt-3 space-y-2">
+    <section id="experience" className="sec">
+      <div className="wrap">
+        <SectionHead
+          title={
+            <>
+              Experience, <em>four years across five teams</em>
+            </>
+          }
+        />
+
+        <motion.ol
+          initial="hidden"
+          whileInView="show"
+          viewport={viewport}
+          variants={container(0.06)}
+          className="panel overflow-hidden"
+        >
+          {EXPERIENCE.map((job) => (
+            <motion.li
+              key={job.company}
+              variants={item}
+              className="row panel-pad grid md:grid-cols-12 gap-x-8 gap-y-4"
+            >
+              <div className="md:col-span-4">
+                <div className="flex items-baseline justify-between md:block">
+                  <h3 className="h4">{job.company}</h3>
+                  <p className="meta md:mt-1.5">{job.period}</p>
+                </div>
+                <p className="small mt-1 md:mt-2">{job.role}</p>
+                <p className="meta mt-3 dotted">
+                  {job.tech.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </p>
+              </div>
+              <ul className="md:col-span-8 space-y-2">
                 {job.points.map((point) => (
-                  <li key={point} className="body-sm flex gap-3">
-                    <span
-                      className="text-[var(--accent)] shrink-0 select-none"
-                      aria-hidden="true"
-                    >
-                      —
+                  <li key={point} className="small flex gap-3">
+                    <span className="text-[var(--fg-3)] select-none" aria-hidden>
+                      –
                     </span>
                     <span>{point}</span>
                   </li>
                 ))}
               </ul>
-              <div className="flex flex-wrap gap-1.5 mt-4">
-                {job.tech.map((t) => (
-                  <span key={t} className="chip">
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </Section>
+            </motion.li>
+          ))}
+        </motion.ol>
+      </div>
+    </section>
   );
 }

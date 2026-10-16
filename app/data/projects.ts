@@ -9,6 +9,15 @@ import unilms from "./../assets/images/Projects/unilms.png";
 import shibayc from "./../assets/images/Projects/shibayc.png";
 import githubUserFinder from "./../assets/images/Projects/githubfindme.png";
 import dogify from "./../assets/images/Projects/Dogify.png";
+import roovVacancies from "./../assets/images/Projects/roov/01-vacancies.png";
+import roovListing from "./../assets/images/Projects/roov/02-listing-detail.png";
+import roovEnquiries from "./../assets/images/Projects/roov/03-enquiries.png";
+import roovChat from "./../assets/images/Projects/roov/04-chat.png";
+import roovResidentHome from "./../assets/images/Projects/roov/05-resident-home.png";
+import roovDocuments from "./../assets/images/Projects/roov/06-documents.png";
+import roovPmDashboard from "./../assets/images/Projects/roov/07-pm-dashboard.png";
+
+export type Screen = { src: StaticImageData; label: string };
 
 export type Project = {
   slug: string;
@@ -19,7 +28,13 @@ export type Project = {
   tech: string[];
   live?: string;
   github?: string;
+  /** Button text for `live` when it isn't a website, e.g. an app store. */
+  liveLabel?: string;
   image?: StaticImageData;
+  /** Mobile screens, shown as a phone gallery instead of a cover. */
+  screens?: Screen[];
+  /** Overrides the status derived from the links. */
+  status?: string;
   featured?: boolean;
   detail?: {
     body?: string;
@@ -30,6 +45,39 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  {
+    slug: "roov",
+    title: "Roov",
+    role: "Product Engineer",
+    year: "2026",
+    summary:
+      "Property management app that helps property managers run their properties and helps house hunters find their next home.",
+    tech: ["React Native", "Node.js", "TypeScript"],
+    live: "https://play.google.com/store/apps/details?id=com.roov.africa",
+    liveLabel: "Get it on Google Play",
+    status: "Live on Google Play",
+    screens: [
+      { src: roovVacancies, label: "Vacancies" },
+      { src: roovListing, label: "Listing detail" },
+      { src: roovEnquiries, label: "Enquiries" },
+      { src: roovChat, label: "Chat" },
+      { src: roovResidentHome, label: "Resident home" },
+      { src: roovDocuments, label: "Documents" },
+      { src: roovPmDashboard, label: "Manager dashboard" },
+    ],
+    featured: true,
+    detail: {
+      body: "One app for everyone involved in a rental. House hunters browse vacancies and message the listing owner directly. Once they move in, the same app becomes their home base for documents, rent, and updates. Property managers get a view of their whole portfolio and a list of what needs their attention today.",
+      features: [
+        "Vacancy search by location and property type, with list and map views",
+        "Listing pages with photos, specifications, and amenities",
+        "In-app enquiries and chat between house hunters and property managers",
+        "Resident home with documents, announcements, resident chat, and rent payments",
+        "Document requests with upload, review, and approval states",
+        "Manager dashboard with occupancy, rent collected, and overdue rent reminders",
+      ],
+    },
+  },
   {
     slug: "ajo",
     title: "Ajo",

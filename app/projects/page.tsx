@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Header from "../Component/Header";
-import Footer from "../Component/Footer";
+import Nav from "../Component/site/Nav";
+import Footer from "../Component/site/Footer";
 import Archive from "./Archive";
 
 export const metadata: Metadata = {
@@ -11,12 +11,10 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <main id="top" className="min-h-screen">
-      <Header />
+    <>
+      <Nav />
       <Archive />
-      <div className="shell">
-        <Footer className="mb-12" />
-      </div>
-    </main>
+      <Footer />
+    </>
   );
 }
