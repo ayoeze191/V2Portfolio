@@ -9,6 +9,7 @@ import unilms from "./../assets/images/Projects/unilms.png";
 import shibayc from "./../assets/images/Projects/shibayc.png";
 import githubUserFinder from "./../assets/images/Projects/githubfindme.png";
 import dogify from "./../assets/images/Projects/Dogify.png";
+import luideo from "./../assets/images/Projects/luideo.png";
 import roovVacancies from "./../assets/images/Projects/roov/01-vacancies.png";
 import roovListing from "./../assets/images/Projects/roov/02-listing-detail.png";
 import roovEnquiries from "./../assets/images/Projects/roov/03-enquiries.png";
@@ -136,19 +137,21 @@ export const projects: Project[] = [
     role: "Freelance Developer",
     year: "2026",
     summary:
-      "E-commerce store for a Lagos jewellery house making handmade coral, pearl, and stone pieces for Nigerian weddings and celebrations.",
-    tech: ["Next.js", "Paystack"],
-    live: "https://luideo.vercel.app/",
+      "Online store for a Lagos jewellery house making handmade coral, pearl and stone pieces for weddings, parties and everyday wear.",
+    tech: ["Next.js", "Flutterwave"],
+    live: "https://shopluideo.com/",
+    image: luideo,
     featured: true,
     detail: {
-      body: "Lui'Deo makes every piece to order, so the store has to do more than list stock: it lets brides and guests browse by material and collection, ask for pieces matched to their outfit, and pay in the way Nigerian customers actually pay.",
+      body: "Lui'Deo sells ready-made pieces and makes custom sets to order, so the store does both: customers can browse and add pieces to their bag, or send their event date, outfit colour and budget and get a design and price back within two days.",
       features: [
-        "Shop organised by material — coral, pearl, stones, bridal sets, earrings, and wrist pieces",
-        "Named collections: Ìyàwó, Olóri, Heritage, and Everyday",
-        "Custom order flow, with WhatsApp consultation for outfit matching",
-        "Paystack checkout supporting card, bank transfer, and USSD",
-        "Customer gallery of pieces worn at real events",
-        "Nationwide delivery across Nigeria",
+        "Shop by material: coral, pearl, stone and gold, bridal sets, earrings, bracelets and rings, and pieces for the groom",
+        "Named collections: Ìyàwó, Olóri, Heritage and Everyday",
+        "Custom order form for event date, outfit colour and budget, plus WhatsApp help on products",
+        "Flutterwave checkout with card, bank transfer and USSD, and prices in naira or US dollars",
+        "Order tracking, wishlist and customer accounts",
+        "\"Worn by you\" gallery of customer photos linked to the pieces they wore",
+        "Delivery to all 36 states and the FCT",
       ],
     },
   },

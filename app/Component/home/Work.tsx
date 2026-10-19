@@ -9,6 +9,7 @@ import { projects, type Project } from "@/app/data/projects";
 
 /** What kind of product each one is — not what it's built with. */
 const DOMAIN: Record<string, string> = {
+  luideo: "E-commerce",
   ajo: "FinTech",
   "debsphere-academy": "SaaS · EdTech",
   learnpally: "EdTech",
@@ -17,7 +18,7 @@ const DOMAIN: Record<string, string> = {
 };
 
 // Roov leads the hero, so it isn't repeated here.
-const SHOWN = ["ajo", "debsphere-academy", "learnpally", "ekopages", "unilms"];
+const SHOWN = ["luideo", "learnpally", "debsphere-academy", "ekopages"];
 
 const FEATURED = SHOWN.map((slug) => projects.find((p) => p.slug === slug)).filter(
   (p): p is Project => Boolean(p),
@@ -32,11 +33,6 @@ export default function Work() {
             <>
               Selected work, <em>shipped and in use</em>
             </>
-          }
-          action={
-            <Link href="/projects" className="btn btn-secondary">
-              All {projects.length} projects
-            </Link>
           }
         />
 
@@ -91,6 +87,12 @@ export default function Work() {
             );
           })}
         </motion.div>
+
+        <div className="mt-8 flex justify-center">
+          <Link href="/projects" className="btn btn-secondary btn-lg">
+            See all {projects.length} projects <span aria-hidden>→</span>
+          </Link>
+        </div>
       </div>
     </section>
   );
