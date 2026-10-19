@@ -46,12 +46,20 @@ export default function Work() {
           {FEATURED.map((project, i) => {
             // An odd card out at the end takes the full row.
             const wide = i === FEATURED.length - 1 && FEATURED.length % 2 === 1;
+            // The card itself opens the live project; the case study is its own
+            // link on top. Links can't nest, so the card link is stretched over
+            // the panel and the case study link sits above it.
+            const href = project.live ?? `/projects/${project.slug}`;
             return (
               <motion.div key={project.slug} variants={item} className={wide ? "md:col-span-2" : ""}>
-                <Link
-                  href={`/projects/${project.slug}`}
-                  className="panel panel-link lift flex flex-col h-full p-2.5 md:p-3"
-                >
+                <article className="panel panel-link lift relative flex flex-col h-full p-2.5 md:p-3">
+                  <a
+                    href={href}
+                    target={project.live ? "_blank" : undefined}
+                    rel={project.live ? "noopener noreferrer" : undefined}
+                    aria-label={project.live ? `Visit ${project.title}` : `${project.title} case study`}
+                    className="absolute inset-0 z-10 rounded-[var(--radius)]"
+                  />
                   <div className={`stage ${wide ? "aspect-[21/9]" : "aspect-[16/10]"}`}>
                     {project.image ? (
                       <Image
@@ -65,7 +73,14 @@ export default function Work() {
                   </div>
                   <div className="flex-1 flex flex-col px-3 pt-5 pb-3">
                     <div className="flex items-baseline justify-between gap-4">
-                      <h3 className="h4">{project.title}</h3>
+                      <h3 className="h4">
+                        {project.title}
+                        {project.live ? (
+                          <span className="text-[var(--fg-3)] font-normal" aria-hidden>
+                            {" "}↗
+                          </span>
+                        ) : null}
+                      </h3>
                       <span className="meta shrink-0">
                         {DOMAIN[project.slug] ?? project.role} · {project.year}
                       </span>
@@ -77,12 +92,15 @@ export default function Work() {
                           <span key={t}>{t}</span>
                         ))}
                       </p>
-                      <span className="link shrink-0">
+                      <Link
+                        href={`/projects/${project.slug}`}
+                        className="link shrink-0 relative z-20"
+                      >
                         Case study <span className="arrow">→</span>
-                      </span>
+                      </Link>
                     </div>
                   </div>
-                </Link>
+                </article>
               </motion.div>
             );
           })}
