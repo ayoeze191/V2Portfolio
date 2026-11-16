@@ -1,4 +1,5 @@
 import Nav from "./Component/site/Nav";
+import Boot from "./Component/site/Boot";
 import Footer from "./Component/site/Footer";
 import Hero from "./Component/home/Hero";
 import Work from "./Component/home/Work";
@@ -11,6 +12,7 @@ import Contact from "./Component/home/Contact";
 export default function Home() {
   return (
     <>
+      <Boot />
       <Nav />
       <main>
         <Hero />

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import SectionHead from "../site/SectionHead";
 import { container, item, viewport } from "../Reveal";
 
@@ -71,56 +72,97 @@ const EXPERIENCE: Role[] = [
 ];
 
 
+/**
+ * Experience as rollout history: newest revision first, a spine that fills
+ * as you scroll (scroll-linked, so idle costs nothing).
+ */
 export default function Experience() {
+  const ref = useRef<HTMLOListElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 60%"] });
+  const fill = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const total = EXPERIENCE.length;
+
   return (
-    <section id="experience" className="sec">
-      <div className="wrap">
+    <section id="experience" data-hud="03 · rollouts" className="sec border-t border-[var(--line)]">
+      <div className="wrap-wide">
         <SectionHead
+          giant
+          index="03"
+          cmd={
+            <>
+              <span className="k">kubectl</span> rollout history deployment/ezekiel
+            </>
+          }
           title={
             <>
-              Experience, <em>four years across five teams</em>
+              Rollout <em>history</em>
             </>
           }
         />
 
-        <motion.ol
-          initial="hidden"
-          whileInView="show"
-          viewport={viewport}
-          variants={container(0.06)}
-          className="panel overflow-hidden"
-        >
-          {EXPERIENCE.map((job) => (
-            <motion.li
-              key={job.company}
-              variants={item}
-              className="row panel-pad grid md:grid-cols-12 gap-x-8 gap-y-4"
-            >
-              <div className="md:col-span-4">
-                <div className="flex items-baseline justify-between md:block">
-                  <h3 className="h4">{job.company}</h3>
-                  <p className="meta md:mt-1.5">{job.period}</p>
-                </div>
-                <p className="small mt-1 md:mt-2">{job.role}</p>
-                <p className="meta mt-3 dotted">
-                  {job.tech.map((t) => (
-                    <span key={t}>{t}</span>
-                  ))}
-                </p>
-              </div>
-              <ul className="md:col-span-8 space-y-2">
-                {job.points.map((point) => (
-                  <li key={point} className="small flex gap-3">
-                    <span className="text-[var(--fg-3)] select-none" aria-hidden>
-                      –
-                    </span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.li>
-          ))}
-        </motion.ol>
+        <div className="hidden md:grid grid-cols-12 gap-x-8 tag pb-3 border-b border-[var(--line)]">
+          <span className="col-span-4 pl-14">Revision · Team</span>
+          <span className="col-span-8">Change cause</span>
+        </div>
+
+        <ol ref={ref} className="relative">
+          {/* Spine */}
+          <div className="absolute left-[19px] top-0 bottom-0 w-px bg-[var(--line)]" aria-hidden>
+            <motion.div style={{ scaleY: fill }} className="absolute inset-0 origin-top bg-gradient-to-b from-[var(--ok)] via-[var(--accent)] to-[var(--accent)]" />
+          </div>
+
+          {EXPERIENCE.map((job, i) => {
+            const rev = total - i;
+            const current = i === 0;
+            return (
+              <motion.li
+                key={job.company}
+                initial="hidden"
+                whileInView="show"
+                viewport={viewport}
+                variants={container(0.06)}
+                className="relative grid md:grid-cols-12 gap-x-8 gap-y-4 py-9 pl-14 md:pl-0 border-b border-[var(--line)]"
+              >
+                <span
+                  aria-hidden
+                  className={`absolute left-[12px] top-[46px] w-[15px] h-[15px] rounded-[4px] border ${current ? "bg-[var(--ok)] border-[var(--ok)] shadow-[0_0_0_4px_var(--ok-tint),0_0_18px_rgba(61,220,151,0.5)]" : "bg-[var(--panel-2)] border-[var(--line-strong)]"}`}
+                />
+                <motion.div variants={item} className="md:col-span-4 md:pl-14">
+                  <p className="tag flex items-center gap-2">
+                    rev {String(rev).padStart(2, "0")}
+                    {current ? (
+                      <span className="inline-flex items-center gap-1.5 text-[var(--ok)]">
+                        · <span className="dot ok !w-1.5 !h-1.5" /> current
+                      </span>
+                    ) : null}
+                  </p>
+                  <h3 className="giant text-[2.6rem] md:text-[3.2rem] mt-2">{job.company}</h3>
+                  <p className="small mt-1">{job.role}</p>
+                  <p className="meta mt-1">{job.period}</p>
+                </motion.div>
+                <motion.div variants={item} className="md:col-span-8 md:pt-7">
+                  <ul className="space-y-2.5">
+                    {job.points.map((point) => (
+                      <li key={point} className="body flex gap-3 !leading-[1.6]">
+                        <span className="mono text-[var(--accent)] select-none text-[0.8rem] pt-[3px]" aria-hidden>
+                          +
+                        </span>
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="flex flex-wrap gap-1.5 mt-5">
+                    {job.tech.map((t) => (
+                      <span key={t} className="pill mono !text-[0.68rem]">
+                        {t}
+                      </span>
+                    ))}
+                  </p>
+                </motion.div>
+              </motion.li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

@@ -10,7 +10,8 @@ export const SOCIALS = [
 /** Home sections, in page order. Absolute so they work from any route. */
 export const NAV = [
   { href: "/#work", label: "Work" },
+  { href: "/#build", label: "Architecture" },
   { href: "/#experience", label: "Experience" },
+  { href: "/#stack", label: "Stack" },
   { href: "/about", label: "About" },
-  { href: "/#contact", label: "Contact" },
 ];

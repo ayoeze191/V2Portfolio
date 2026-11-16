@@ -3,39 +3,43 @@
 @import "shadcn/tailwind.css";
 
 /* ─────────────────────────────────────────────────────────────
-   Framer-inspired. One theme, no toggle: pure black ground, content
-   held in dark rounded panels with hairline borders, white type set
-   tight in Inter Display, one blue accent used sparingly. Every colour
-   lives here — components reference tokens only.
+   "Cluster" theme. The site is drawn as a running Kubernetes cluster:
+   blueprint grid ground, nodes and pods as panels, mono status labels,
+   one control-plane blue and a "Running" green. One theme, no toggle.
+   Every colour lives here — components reference tokens only.
    ───────────────────────────────────────────────────────────── */
 
 :root {
-  --bg: #000000;
-  --panel: #0c0c0c;
-  --panel-2: #111111;
-  --panel-3: #171717;
-  --panel-4: #222222;
+  --bg: #050608;
+  --panel: #0a0c10;
+  --panel-2: #0f1217;
+  --panel-3: #141820;
+  --panel-4: #1c212b;
 
-  --fg: #ffffff;
-  --fg-2: #a1a1a1; /* body copy, second line of headings */
-  --fg-3: #6b6b6b; /* labels, meta */
+  --fg: #eef1f6;
+  --fg-2: #98a2b3; /* body copy, second line of headings */
+  --fg-3: #5c6677; /* labels, meta */
 
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.16);
+  --line: rgba(148, 163, 184, 0.12);
+  --line-strong: rgba(148, 163, 184, 0.26);
 
-  --accent: #0099ff;
-  --accent-tint: rgba(0, 153, 255, 0.12);
+  --accent: #4f8bff; /* control-plane blue */
+  --accent-tint: rgba(79, 139, 255, 0.12);
+  --ok: #3ddc97; /* Running */
+  --ok-tint: rgba(61, 220, 151, 0.12);
+  --warn: #ffb547; /* Pending */
 
-  --radius: 20px;
-  --radius-sm: 12px;
+  --radius: 16px;
+  --radius-sm: 10px;
 
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-inter), system-ui, sans-serif;
+  --font-giant: var(--font-anton), Impact, "Arial Narrow", sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --gutter: clamp(1rem, 4vw, 3rem);
-  --nav-h: 60px;
+  --nav-h: 52px;
 
   color-scheme: dark;
 }
@@ -447,3 +451,291 @@
     grid-column: span 9;
   }
 }
+
+/* ═════════════════════════════════════════════════════════════
+   Cluster system: blueprint ground, HUD, giant type, pods, terminal.
+   Static backgrounds only. Motion is scroll- or view-driven.
+   ═════════════════════════════════════════════════════════════ */
+@layer components {
+  .wrap-wide {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Blueprint dot grid. A static background — costs nothing to scroll. */
+  .bp-grid {
+    background-image: radial-gradient(rgba(148, 163, 184, 0.13) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-position: -11px -11px;
+  }
+  /* Faint column rules, like a drafting sheet. */
+  .bp-cols {
+    background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
+    background-size: calc(100% / 6) 100%;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .giant {
+    font-family: var(--font-giant);
+    font-weight: 400;
+    line-height: 0.82;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  /* Status dots: Running / Pending / idle. No infinite animation. */
+  .dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--fg-3);
+    flex-shrink: 0;
+  }
+  .dot.ok {
+    background: var(--ok);
+    box-shadow: 0 0 0 3px var(--ok-tint), 0 0 12px rgba(61, 220, 151, 0.55);
+  }
+  .dot.warn {
+    background: var(--warn);
+    box-shadow: 0 0 0 3px rgba(255, 181, 71, 0.14);
+  }
+  .dot.blue {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-tint);
+  }
+
+  /* ── HUD bar ─────────────────────────────────────────────────── */
+  .hud {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    height: var(--nav-h);
+    background: var(--bg); /* solid: no backdrop-filter on sticky bars */
+    border-bottom: 1px solid var(--line);
+  }
+  .hud-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 100%;
+    padding-inline: 1rem;
+    border-left: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-2);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .hud-link {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-2);
+    transition: color 0.2s;
+  }
+  .hud-link:hover {
+    color: var(--fg);
+  }
+
+  /* ── Pod: a panel with a status header bar ───────────────────── */
+  .pod {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .pod-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 38px;
+    padding-inline: 0.9rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: var(--fg-2);
+    white-space: nowrap;
+  }
+  /* Corner ticks: the "selected" bracket from drafting tools. */
+  .ticks {
+    position: relative;
+  }
+  .ticks::before,
+  .ticks::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: var(--line-strong);
+    border-style: solid;
+    pointer-events: none;
+  }
+  .ticks::before {
+    top: -6px;
+    left: -6px;
+    border-width: 1px 0 0 1px;
+  }
+  .ticks::after {
+    bottom: -6px;
+    right: -6px;
+    border-width: 0 1px 1px 0;
+  }
+
+  /* ── Command line used as section openers ────────────────────── */
+  .cmd {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--fg-2);
+  }
+  .cmd .ps {
+    color: var(--ok);
+  }
+  .cmd .k {
+    color: var(--accent);
+  }
+
+  /* ── Terminal panel ──────────────────────────────────────────── */
+  .term {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.75;
+    color: var(--fg-2);
+  }
+  .term .ps {
+    color: var(--ok);
+  }
+  .term .k {
+    color: var(--accent);
+  }
+  .term .s {
+    color: #e6c07b;
+  }
+  .term .c {
+    color: var(--fg-3);
+  }
+
+  /* YAML manifest card */
+  .yaml {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: var(--fg-2);
+    white-space: pre;
+  }
+  .yaml .key {
+    color: #8fb4ff;
+  }
+  .yaml .str {
+    color: #e6c07b;
+  }
+  .yaml .cm {
+    color: var(--fg-3);
+  }
+
+  /* Big two-tone section heading in the giant face. */
+  .sec-title {
+    font-family: var(--font-giant);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(3rem, 9vw, 8rem);
+    line-height: 0.86;
+    letter-spacing: -0.005em;
+    color: var(--fg);
+  }
+  .sec-title em {
+    font-style: normal;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(148, 163, 184, 0.42);
+  }
+
+  /* Architecture diagram */
+  .arch-node rect {
+    fill: var(--panel-2);
+    stroke: var(--line-strong);
+    transition:
+      stroke 0.25s,
+      fill 0.25s;
+  }
+  .arch-node text {
+    font-family: var(--font-mono);
+    fill: var(--fg-2);
+    transition: fill 0.25s;
+  }
+  .arch-node.on rect {
+    stroke: var(--accent);
+    fill: #101a2e;
+  }
+  .arch-node.on text {
+    fill: var(--fg);
+  }
+  .arch-edge {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    transition: stroke 0.25s;
+  }
+  .arch-edge.on {
+    stroke: var(--accent);
+  }
+
+  /* Boot overlay: shown once per session, skipped if already booted. */
+  .boot {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    display: grid;
+    place-items: center;
+  }
+  .booted .boot {
+    display: none;
+  }
+  .boot-line {
+    opacity: 0;
+    transform: translateY(4px);
+    animation: bootLine 0.28s var(--ease-out) forwards;
+  }
+  .boot-bar {
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: bootBar 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.1s forwards;
+  }
+  .boot.leaving {
+    transform: translateY(-100%);
+    transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+}
+
+@keyframes bootLine {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bootBar {
+  to {
+    transform: scaleX(1);
+  }
+}
+
