@@ -25,7 +25,7 @@ const QUOTES = [
 /** Recommendations as cluster events: a log line, then the message. */
 export default function Words() {
   return (
-    <section data-hud="04 · events" className="sec bp-grid border-t border-[var(--line)]">
+    <section id="testimonials" data-hud="04 · testimonials" className="sec bp-grid border-t border-[var(--line)]">
       <div className="wrap-wide">
         <SectionHead
           giant
@@ -37,7 +37,7 @@ export default function Words() {
           }
           title={
             <>
-              Kind <em>words</em>
+              Testi<em>monials</em>
             </>
           }
         />
