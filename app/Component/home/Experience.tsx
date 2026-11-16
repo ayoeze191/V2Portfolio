@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import SectionHead from "../site/SectionHead";
 import { container, item, viewport } from "../Reveal";
 
-type Role = {
+export type Role = {
   company: string;
   role: string;
   period: string;
@@ -13,7 +13,7 @@ type Role = {
   tech: string[];
 };
 
-const EXPERIENCE: Role[] = [
+export const EXPERIENCE: Role[] = [
   {
     company: "Roov",
     role: "Product Engineer",
