@@ -11,13 +11,16 @@ import { useBooted } from "../site/Boot";
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const NAME = "EZEKIEL".split("");
 
+/** Years-of-experience card in the hero. Hidden for now; set to true to bring it back. */
+const SHOW_YEARS = false;
+
 /** Teams and products that have run my code: the "nodes" that joined. */
 const NODES = ["Roov", "Renato", "Learnpally", "RentAnything", "EkoPages", "Debsphere"];
 
 const LEFT_LINKS = [
   { href: "#work", label: "Deployments" },
   { href: "#build", label: "Architecture" },
-  { href: "#experience", label: "Rollouts" },
+  { href: "#experience", label: "Experience" },
 ];
 const RIGHT_LINKS = [
   { href: "#stack", label: "Node pool" },
@@ -286,14 +289,16 @@ export default function Hero() {
           products end to end, and the infrastructure they run on.
         </motion.p>
         <div className="flex gap-3">
-          <PodCard name="pod/xp" value="4+" label="Years in production" ready={ready} delay={0.95} />
+          {SHOW_YEARS ? (
+            <PodCard name="pod/xp" value="4+" label="Years in production" ready={ready} delay={0.95} />
+          ) : null}
           <PodCard
             name="pod/ship"
             value={`${projects.length}`}
             label="Projects deployed"
             ready={ready}
-            delay={1.1}
-            className="hidden lg:block mt-8"
+            delay={SHOW_YEARS ? 1.1 : 0.95}
+            className={SHOW_YEARS ? "hidden lg:block mt-8" : ""}
           />
         </div>
       </motion.div>
