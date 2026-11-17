@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { motion, useInView, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
 import SectionHead from "../site/SectionHead";
 import { Reveal } from "../Reveal";
 import { RESUME } from "@/app/data/site";
@@ -95,23 +95,51 @@ const PRINCIPLES: { title: string; body: string; nodes: NodeId[] }[] = [
   },
 ];
 
-function Diagram({ active }: { active: Set<NodeId> }) {
-  const svgRef = useRef<SVGSVGElement>(null);
+/* ── Boot sequence: the cluster comes up when the section arrives ── */
 
-  // Packets only animate while the diagram is on screen.
+const BOOT: { id: NodeId; log: string }[] = [
+  { id: "git", log: "push main → pipeline triggered" },
+  { id: "ci", log: "ci: 214 tests passed · image built" },
+  { id: "reg", log: "pushed ezekiel/api:sha-7d9f4" },
+  { id: "k8s", log: "rollout started · 3/3 replicas" },
+  { id: "pg", log: "postgres ready · migrations applied" },
+  { id: "redis", log: "redis ready · queues attached" },
+  { id: "gw", log: "api-gateway Running · readiness ok" },
+  { id: "auth", log: "auth Running · jwks loaded" },
+  { id: "pay", log: "payments Running · idempotency on" },
+  { id: "jobs", log: "jobs Running · 4 workers" },
+  { id: "web", log: "web connected → api-gateway" },
+  { id: "mobile", log: "mobile connected → api-gateway" },
+];
+const DONE = BOOT.length;
+const TICK = 260; // ms per node
+
+type Phase = "hidden" | "pending" | "running";
+
+function phaseOf(id: NodeId, step: number): Phase {
+  const i = BOOT.findIndex((b) => b.id === id);
+  if (i < step) return "running";
+  if (i === step) return "pending";
+  return "hidden";
+}
+
+function Diagram({ active, step }: { active: Set<NodeId>; step: number }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const booted = step >= DONE;
+
+  // Packets only run once the cluster is up, and only while on screen.
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     svg.pauseAnimations();
-    if (reduce) return;
+    if (!booted || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const io = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) svg.unpauseAnimations();
       else svg.pauseAnimations();
     });
     io.observe(svg);
     return () => io.disconnect();
-  }, []);
+  }, [booted]);
 
   return (
     <svg ref={svgRef} viewBox="0 0 760 480" className="w-full h-auto" role="img" aria-labelledby="arch-title">
@@ -121,7 +149,7 @@ function Diagram({ active }: { active: Set<NodeId> }) {
         them out to Kubernetes.
       </title>
 
-      {/* Cluster boundary */}
+      {/* Cluster boundary: draws itself once the rollout starts */}
       <motion.rect
         x="20"
         y="140"
@@ -132,9 +160,8 @@ function Diagram({ active }: { active: Set<NodeId> }) {
         stroke="rgba(79,139,255,0.35)"
         strokeDasharray="5 6"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        animate={{ opacity: step >= 4 ? 1 : 0.15 }}
+        transition={{ duration: 0.6 }}
       />
       <text x="36" y="160" className="mono" fontSize="10" fill="rgba(79,139,255,0.85)" letterSpacing="1.5">
         CLUSTER · PROD
@@ -143,9 +170,10 @@ function Diagram({ active }: { active: Set<NodeId> }) {
         DELIVERY
       </text>
 
-      {/* Edges */}
-      {EDGES.map((e, i) => {
-        const on = active.has(e.from) && active.has(e.to);
+      {/* Edges draw once both ends are Running */}
+      {EDGES.map((e) => {
+        const up = phaseOf(e.from, step) === "running" && phaseOf(e.to, step) === "running";
+        const on = booted && active.has(e.from) && active.has(e.to);
         return (
           <motion.path
             key={e.id}
@@ -153,14 +181,13 @@ function Diagram({ active }: { active: Set<NodeId> }) {
             d={e.d}
             className={`arch-edge ${on ? "on" : ""}`}
             initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
-            transition={{ duration: 0.9, delay: 0.25 + i * 0.06, ease: [0.65, 0, 0.35, 1] }}
+            animate={{ pathLength: up ? 1 : 0 }}
+            transition={{ duration: 0.55, ease: [0.65, 0, 0.35, 1] }}
           />
         );
       })}
 
-      {/* Packets riding the edges (SMIL, paused off-screen) */}
+      {/* Packets riding the edges (SMIL, paused until booted and on screen) */}
       {EDGES.filter((e) => e.packet !== undefined).map((e) => (
         <circle key={`pk-${e.id}`} r="3" opacity="0" fill={e.id.startsWith("p") ? "var(--ok)" : "var(--accent)"}>
           <animateMotion dur="2.6s" begin={`${e.packet}s`} repeatCount="indefinite" rotate="auto">
@@ -170,26 +197,47 @@ function Diagram({ active }: { active: Set<NodeId> }) {
         </circle>
       ))}
 
-      {/* Nodes */}
-      {(Object.keys(NODES) as NodeId[]).map((id, i) => {
+      {/* Nodes: hidden → Pending (dashed, amber) → Running, with a ping */}
+      {(Object.keys(NODES) as NodeId[]).map((id) => {
         const n = box(id);
-        const on = active.has(id);
+        const phase = phaseOf(id, step);
+        const on = booted && active.has(id);
         return (
           <motion.g
             key={id}
-            className={`arch-node ${on ? "on" : ""}`}
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
-            transition={{ duration: 0.5, delay: 0.1 + i * 0.05 }}
+            className={`arch-node ${phase === "pending" ? "pending" : ""} ${on ? "on" : ""}`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: phase === "hidden" ? 0 : 1, scale: phase === "hidden" ? 0.9 : 1 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transformOrigin: `${n.cx}px ${n.cy}px`, transformBox: "view-box" }}
           >
             <rect x={n.x} y={n.y} width={n.w} height={H} rx="9" />
-            <circle cx={n.x + 14} cy={n.y + 16} r="3.2" fill={on ? "var(--ok)" : "var(--fg-3)"} />
+            {phase === "running" && !booted ? (
+              <motion.rect
+                x={n.x}
+                y={n.y}
+                width={n.w}
+                height={H}
+                rx="9"
+                fill="none"
+                stroke="var(--ok)"
+                initial={{ opacity: 0.9, scale: 1 }}
+                animate={{ opacity: 0, scale: 1.25 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                style={{ transformOrigin: `${n.cx}px ${n.cy}px`, transformBox: "view-box" }}
+              />
+            ) : null}
+            <circle
+              cx={n.x + 14}
+              cy={n.y + 16}
+              r="3.2"
+              fill={phase === "pending" ? "var(--warn)" : on || (phase === "running" && !booted) ? "var(--ok)" : "var(--fg-3)"}
+            />
             <text x={n.x + 24} y={n.y + 19.5} fontSize="11.5" style={{ fill: on ? "var(--fg)" : undefined }}>
               {n.label}
             </text>
-            <text x={n.x + 14} y={n.y + 35} fontSize="9.5" style={{ fill: "var(--fg-3)" }}>
-              {n.sub}
+            <text x={n.x + 14} y={n.y + 35} fontSize="9.5" style={{ fill: phase === "pending" ? "var(--warn)" : "var(--fg-3)" }}>
+              {phase === "pending" ? "ContainerCreating" : n.sub}
             </text>
           </motion.g>
         );
@@ -198,15 +246,115 @@ function Diagram({ active }: { active: Set<NodeId> }) {
   );
 }
 
+/** Rolling log under the diagram while the cluster boots. */
+function BootLog({ step }: { step: number }) {
+  const lines = BOOT.slice(Math.max(0, step - 3), Math.min(step, DONE));
+  return (
+    <div className="term !text-[0.7rem] !leading-[1.7] h-[5.1em] overflow-hidden px-4 py-2 border-t border-[var(--line)] bg-[var(--panel)]">
+      {lines.map((l, i) => (
+        <motion.p
+          key={l.id}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: i === lines.length - 1 ? 1 : 0.55, y: 0 }}
+          transition={{ duration: 0.25 }}
+          className="truncate"
+        >
+          <span className="c">{String(BOOT.findIndex((b) => b.id === l.id) * 0.26 + 0.1).slice(0, 4).padEnd(4, "0")}s</span>{" "}
+          <span className="ps">✓</span> {l.log}
+        </motion.p>
+      ))}
+    </div>
+  );
+}
+
+/* ── Scroll-lit paragraph: words brighten as you read down ─────── */
+
+function Word({ children, progress, at }: { children: string; progress: MotionValue<number>; at: number }) {
+  const opacity = useTransform(progress, [at - 0.08, at], [0.18, 1]);
+  return <motion.span style={{ opacity }}>{children} </motion.span>;
+}
+
+function LitParagraph({ text, muted }: { text: string; muted: string }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 88%", "end 55%"] });
+  const words = text.split(" ");
+  const mutedWords = muted.split(" ");
+  const total = words.length + mutedWords.length;
+  return (
+    <p ref={ref} className="text-[1.3rem] md:text-[1.6rem] leading-[1.38] tracking-[-0.02em] text-[var(--fg)]">
+      {words.map((w, i) => (
+        <Word key={i} progress={scrollYProgress} at={(i + 1) / total}>
+          {w}
+        </Word>
+      ))}
+      <span className="text-[var(--fg-2)]">
+        {mutedWords.map((w, i) => (
+          <Word key={i} progress={scrollYProgress} at={(words.length + i + 1) / total}>
+            {w}
+          </Word>
+        ))}
+      </span>
+    </p>
+  );
+}
+
 /* ── Section ───────────────────────────────────────────────────── */
 
 export default function Approach() {
   const [current, setCurrent] = useState(0);
   const active = new Set<NodeId>(PRINCIPLES[current].nodes);
+  const reduce = useReducedMotion();
+
+  // Boot the cluster once the diagram is well in view.
+  const diagramRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(diagramRef, { once: true, margin: "0px 0px -25% 0px" });
+  const [ticks, setTicks] = useState(0);
+  const step = reduce ? DONE : ticks;
+  useEffect(() => {
+    if (!inView || reduce) return;
+    const id = window.setInterval(() => {
+      setTicks((t) => {
+        if (t >= DONE) {
+          window.clearInterval(id);
+          return t;
+        }
+        return t + 1;
+      });
+    }, TICK);
+    return () => window.clearInterval(id);
+  }, [inView, reduce]);
+  const booted = step >= DONE;
+
+  // Scan line sweeping the section in, once.
+  const sectionRef = useRef<HTMLElement>(null);
+  const sectionSeen = useInView(sectionRef, { once: true, margin: "0px 0px -30% 0px" });
 
   return (
-    <section id="build" data-hud="02 · architecture" className="sec bp-grid border-t border-[var(--line)]">
-      <div className="wrap-wide">
+    <section
+      ref={sectionRef}
+      id="build"
+      data-hud="02 · architecture"
+      className="relative sec bp-grid border-t border-[var(--line)] overflow-clip"
+    >
+      {!reduce ? (
+        <motion.div
+          aria-hidden
+          initial={{ top: "0%", opacity: 0 }}
+          animate={sectionSeen ? { top: "100%", opacity: [0, 1, 1, 0] } : undefined}
+          transition={{ duration: 1.6, ease: [0.65, 0, 0.35, 1], times: [0, 0.08, 0.85, 1] }}
+          className="absolute inset-x-0 z-20 pointer-events-none"
+        >
+          <div className="h-px bg-[var(--accent)] shadow-[0_0_24px_4px_rgba(79,139,255,0.55)]" />
+          <div className="h-24 -mt-24 -translate-y-px bg-gradient-to-t from-[rgba(79,139,255,0.12)] to-transparent" />
+        </motion.div>
+      ) : null}
+
+      <motion.div
+        initial={reduce ? false : { clipPath: "inset(0 0 100% 0)" }}
+        animate={sectionSeen || reduce ? { clipPath: "inset(0 0 0% 0)" } : undefined}
+        transition={{ duration: 1.6, ease: [0.65, 0, 0.35, 1] }}
+        className="wrap-wide"
+      >
         <SectionHead
           giant
           index="02"
@@ -222,16 +370,13 @@ export default function Approach() {
           }
         />
 
-        <div className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-          <div className="lg:col-span-5">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          <div className="lg:col-span-5 min-w-0">
+            <LitParagraph
+              text="I build the whole thing: React and React Native on the surface, Node.js services underneath, and the auth, payment and queue paths in between."
+              muted="Then I package it, wire the pipeline and ship it somewhere it can scale."
+            />
             <Reveal>
-              <p className="text-[1.25rem] md:text-[1.45rem] leading-[1.4] tracking-[-0.02em] text-[var(--fg)]">
-                I build the whole thing: React and React Native on the surface, Node.js
-                services underneath, and the auth, payment and queue paths in between.{" "}
-                <span className="text-[var(--fg-2)]">
-                  Then I package it, wire the pipeline and ship it somewhere it can scale.
-                </span>
-              </p>
               <p className="body mt-5 max-w-[52ch]">
                 Right now I&apos;m at Roov, a property tech company, working across the mobile app
                 and the services behind it. I&apos;m also learning AI, building with models rather
@@ -248,18 +393,36 @@ export default function Approach() {
             </Reveal>
 
             <p className="tag mt-12 mb-3">Principles · select one to trace it</p>
-            <ol className="border-t border-[var(--line)]">
+            <motion.ol
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
+              className="border-t border-[var(--line)]"
+            >
               {PRINCIPLES.map((p, i) => {
                 const on = i === current;
                 return (
-                  <li key={p.title} className="border-b border-[var(--line)]">
+                  <motion.li
+                    key={p.title}
+                    variants={{
+                      hidden: { opacity: 0, x: -24 },
+                      show: { opacity: 1, x: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
+                    }}
+                    className="relative border-b border-[var(--line)]"
+                  >
+                    {/* active rail */}
+                    <span
+                      aria-hidden
+                      className={`absolute left-0 top-0 bottom-0 w-px origin-top transition-transform duration-500 bg-[var(--accent)] ${on ? "scale-y-100" : "scale-y-0"}`}
+                    />
                     <button
                       type="button"
                       onMouseEnter={() => setCurrent(i)}
                       onFocus={() => setCurrent(i)}
                       onClick={() => setCurrent(i)}
                       aria-pressed={on}
-                      className="w-full text-left py-4 grid grid-cols-[2.5rem_1fr] gap-x-2 group"
+                      className={`w-full text-left py-4 pl-4 grid grid-cols-[2.5rem_1fr] gap-x-2 group transition-colors ${on ? "bg-[linear-gradient(90deg,rgba(79,139,255,0.07),transparent)]" : ""}`}
                     >
                       <span className={`mono text-[0.75rem] pt-1 ${on ? "text-[var(--accent)]" : "text-[var(--fg-3)]"}`}>
                         {String(i + 1).padStart(2, "0")}
@@ -279,41 +442,62 @@ export default function Approach() {
                         </span>
                       </span>
                     </button>
-                  </li>
+                  </motion.li>
                 );
               })}
-            </ol>
+            </motion.ol>
           </div>
 
-          <div className="lg:col-span-7 lg:sticky lg:top-[calc(var(--nav-h)+24px)]">
-            <Reveal>
-              <div className="pod ticks">
-                <div className="pod-bar">
-                  <span className="dot ok" />
-                  <span className="text-[var(--fg)]">architecture</span>
-                  <span className="text-[var(--fg-3)]">· how a request travels</span>
-                  <span className="ml-auto hidden sm:flex items-center gap-4 text-[var(--fg-3)]">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" /> request
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--ok)]" /> release
-                    </span>
+          <div ref={diagramRef} className="lg:col-span-7 min-w-0 lg:sticky lg:top-[calc(var(--nav-h)+24px)]">
+            <motion.div
+              initial={{ opacity: 0, y: 30, rotateX: 8 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+              viewport={{ once: true, margin: "0px 0px -80px 0px" }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              style={{ transformPerspective: 1200 }}
+              className="pod ticks"
+            >
+              <div className="pod-bar">
+                <span className={`dot ${booted ? "ok" : "warn"}`} />
+                <span className="text-[var(--fg)]">{booted ? "cluster healthy" : "booting cluster"}</span>
+                <span className="text-[var(--fg-3)] tabular-nums">
+                  · {Math.min(step, DONE)}/{DONE} running
+                </span>
+                <span className="ml-auto hidden sm:flex items-center gap-4 text-[var(--fg-3)]">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" /> request
                   </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--ok)]" /> release
+                  </span>
+                </span>
+              </div>
+              {/* boot progress */}
+              <div className="h-[2px] bg-[var(--panel-3)]">
+                <div
+                  className="h-full origin-left bg-[var(--ok)] transition-transform duration-300"
+                  style={{ transform: `scaleX(${Math.min(step, DONE) / DONE})` }}
+                />
+              </div>
+              <div className="bp-grid overflow-x-auto md:overflow-visible">
+                <div className="p-3 md:p-5 min-w-[640px] md:min-w-0">
+                  <Diagram active={active} step={step} />
                 </div>
-                <div className="p-3 md:p-5 bp-grid">
-                  <Diagram active={active} />
-                </div>
+              </div>
+              <p className="md:hidden tag !text-[0.58rem] px-4 pb-2 -mt-1">swipe the diagram →</p>
+              {booted ? (
                 <div className="pod-bar !border-b-0 border-t border-[var(--line)]">
                   <span className="text-[var(--fg-3)]">tracing</span>
                   <span className="text-[var(--accent)]">{String(current + 1).padStart(2, "0")}</span>
                   <span className="text-[var(--fg)] truncate">{PRINCIPLES[current].title}</span>
                 </div>
-              </div>
-            </Reveal>
+              ) : (
+                <BootLog step={step} />
+              )}
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

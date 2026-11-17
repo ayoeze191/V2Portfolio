@@ -47,10 +47,14 @@ export default function Words() {
           whileInView="show"
           viewport={viewport}
           variants={container(0.1)}
-          className="grid md:grid-cols-2 gap-4"
+          className="flex md:grid md:grid-cols-2 gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-[var(--gutter)] px-[var(--gutter)] md:mx-0 md:px-0 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {QUOTES.map((q) => (
-            <motion.figure key={q.name} variants={item} className="pod flex flex-col">
+            <motion.figure
+              key={q.name}
+              variants={item}
+              className="pod flex flex-col shrink-0 w-[86%] md:w-auto snap-center"
+            >
               <div className="pod-bar !text-[0.64rem]">
                 <span className="dot ok" />
                 <span className="text-[var(--ok)]">Normal</span>
@@ -82,6 +86,7 @@ export default function Words() {
             </motion.figure>
           ))}
         </motion.div>
+        <p className="md:hidden tag !text-[0.58rem] mt-3 text-center">swipe for more →</p>
       </div>
     </section>
   );

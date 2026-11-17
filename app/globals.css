@@ -689,6 +689,10 @@
   .arch-node.on text {
     fill: var(--fg);
   }
+  .arch-node.pending rect {
+    stroke: var(--warn);
+    stroke-dasharray: 4 4;
+  }
   .arch-edge {
     fill: none;
     stroke: var(--line-strong);

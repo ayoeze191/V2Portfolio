@@ -127,6 +127,40 @@ function Manifest({ ready }: { ready: boolean }) {
   );
 }
 
+/** Phone-sized pod: a status line and one value, floating by the portrait. */
+function Chip({
+  ready,
+  delay,
+  title,
+  children,
+  className = "",
+  tilt = 0,
+}: {
+  ready: boolean;
+  delay: number;
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+  tilt?: number;
+}) {
+  const running = usePodStatus(ready, delay * 1000 + 600);
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
+      animate={ready ? { opacity: 1, scale: 1, rotate: tilt } : undefined}
+      transition={{ type: "spring", stiffness: 260, damping: 18, delay }}
+      className={`absolute z-30 pod !rounded-[10px] shadow-[0_16px_40px_-14px_rgba(0,0,0,0.9)] ${className}`}
+    >
+      <div className="flex items-center gap-1.5 h-6 px-2 border-b border-[var(--line)] bg-[var(--panel-2)] mono text-[0.55rem] tracking-[0.06em]">
+        <span className={`dot !w-[5px] !h-[5px] ${running ? "ok" : "warn"}`} />
+        <span className={running ? "text-[var(--fg)]" : "text-[var(--warn)]"}>{running ? "Running" : "Pending"}</span>
+        <span className="text-[var(--fg-3)]">{title}</span>
+      </div>
+      <div className="px-2.5 py-2">{children}</div>
+    </motion.div>
+  );
+}
+
 /** Orbit rings around the portrait: the control plane and its workloads. */
 function Orbits({ rotate, ready }: { rotate: MotionValue<number>; ready: boolean }) {
   const ring = (r: number, n: number, offset: number) =>
@@ -229,6 +263,19 @@ export default function Hero() {
           ))}
         </motion.div>
 
+        {/* Phones: one status line instead of the split nav */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={ready ? { opacity: 1 } : undefined}
+          transition={{ duration: 0.8, delay: 0.7 }}
+          className="md:hidden tag !text-[0.6rem] mt-3 flex items-center justify-between"
+        >
+          <span className="flex items-center gap-2 text-[var(--fg)]">
+            <span className="dot ok !w-[6px] !h-[6px]" /> fullstack · cloud-native
+          </span>
+          <span>lagos, ng</span>
+        </motion.p>
+
         {/* Split nav under the name */}
         <motion.nav
           aria-label="Sections"
@@ -307,6 +354,28 @@ export default function Hero() {
       <motion.div style={{ y: rightY }} className="hidden md:block absolute z-30 right-[var(--gutter)] lg:right-[5%] bottom-[9%]">
         <Manifest ready={ready} />
       </motion.div>
+
+      {/* Phones: pods floating around the portrait */}
+      <div className="md:hidden">
+        <motion.div style={{ y: leftY }} className="absolute inset-0 pointer-events-none">
+          <Chip ready={ready} delay={0.9} title="pod/ship" className="left-[4%] top-[34%]" tilt={-3}>
+            <p className="giant text-[1.9rem] leading-none">{projects.length}</p>
+            <p className="tag !text-[0.5rem] mt-1">deployed</p>
+          </Chip>
+          <Chip ready={ready} delay={1.25} title="runtime" className="left-[3%] top-[60%]" tilt={2}>
+            <p className="mono text-[0.62rem] text-[var(--fg)]">docker · k8s</p>
+          </Chip>
+        </motion.div>
+        <motion.div style={{ y: rightY }} className="absolute inset-0 pointer-events-none">
+          <Chip ready={ready} delay={1.05} title="ezekiel.yaml" className="right-[4%] top-[45%]" tilt={3}>
+            <pre className="yaml !text-[0.58rem] !leading-[1.6]">
+              <span className="key">kind</span>: Engineer{"\n"}
+              <span className="key">roles</span>: 3{"\n"}
+              <span className="key">open</span>: <span className="text-[var(--ok)]">true</span>
+            </pre>
+          </Chip>
+        </motion.div>
+      </div>
 
       {/* CTAs over the portrait */}
       <motion.div

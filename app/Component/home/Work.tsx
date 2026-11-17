@@ -12,6 +12,7 @@ import {
   type MotionValue,
 } from "motion/react";
 import SectionHead from "../site/SectionHead";
+import { useMedia } from "../useMedia";
 import { container, item, viewport } from "../Reveal";
 import { projects, type Project } from "@/app/data/projects";
 
@@ -198,8 +199,7 @@ function RailPod({
  * padded so every pod can pass the centre, where the ingress packet sits:
  * traffic seems to reach each service in turn. Purely scroll-linked.
  */
-function Rail() {
-  const sectionRef = useRef<HTMLElement>(null);
+function Rail({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const distance = useMotionValue(0);
@@ -220,8 +220,12 @@ function Rail() {
     const ro = new ResizeObserver(measure);
     if (trackRef.current) ro.observe(trackRef.current);
     if (viewportRef.current) ro.observe(viewportRef.current);
-    return () => ro.disconnect();
-  }, [distance, viewW]);
+    const section = sectionRef.current;
+    return () => {
+      ro.disconnect();
+      if (section) section.style.height = "";
+    };
+  }, [distance, viewW, sectionRef]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -235,7 +239,7 @@ function Rail() {
   );
 
   return (
-    <section id="work" data-hud="01 · deployments" ref={sectionRef} className="relative bp-grid border-t border-[var(--line)]">
+    <>
       <div
         className="sticky overflow-hidden flex flex-col justify-center"
         style={{ top: NAV_H, height: `calc(100vh - ${NAV_H}px)` }}
@@ -286,14 +290,14 @@ function Rail() {
           </motion.div>
         </div>
       </div>
-    </section>
+    </>
   );
 }
 
 /** Plain grid for anyone who has asked their OS for less motion. */
 function Grid() {
   return (
-    <section id="work" data-hud="01 · deployments" className="sec bp-grid border-t border-[var(--line)]">
+    <div className="sec">
       <div className="wrap-wide">
         {head}
         <motion.div
@@ -313,11 +317,52 @@ function Grid() {
           <SeeAll />
         </div>
       </div>
-    </section>
+    </div>
+  );
+}
+
+/**
+ * Phones: a deck. Each pod sticks under the HUD and the next one slides
+ * over it, offset a little so the stack stays readable. Pure CSS sticky.
+ */
+function Deck() {
+  return (
+    <div className="pt-16 pb-14">
+      <div className="wrap-wide">
+        {head}
+        <p className="tag -mt-2 mb-6 flex items-center gap-2">
+          <span className="dot ok" /> {FEATURED.length} deployments · scroll to roll through
+        </p>
+        <ol className="relative">
+          {FEATURED.map((project, i) => (
+            <li
+              key={project.slug}
+              className="sticky mb-6 last:mb-0"
+              style={{ top: `calc(var(--nav-h) + 14px + ${i * 12}px)` }}
+            >
+              <div className="shadow-[0_-18px_40px_-12px_rgba(0,0,0,0.85)] rounded-[var(--radius)]">
+                <ProjectPod project={project} />
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-10 flex justify-center">
+          <SeeAll />
+        </div>
+      </div>
+    </div>
   );
 }
 
 export default function Work() {
   const reduce = useReducedMotion();
-  return reduce ? <Grid /> : <Rail />;
+  const wide = useMedia("(min-width: 768px)");
+  const ref = useRef<HTMLElement>(null);
+
+  // One stable <section> (the HUD observes it); only its contents switch.
+  return (
+    <section id="work" data-hud="01 · deployments" ref={ref} className="relative bp-grid border-t border-[var(--line)]">
+      {reduce ? <Grid /> : wide ? <Rail sectionRef={ref} /> : <Deck />}
+    </section>
+  );
 }
