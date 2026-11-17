@@ -4,6 +4,10 @@ import { motion } from "motion/react";
 import { container, item, viewport } from "../Reveal";
 import { EMAIL, RESUME, SOCIALS } from "@/app/data/site";
 
+const SLAM = "Let's ship it.".split("");
+const OUTLINE_FROM = "Let's ship ".length; // "it" is drawn in outline
+const typing = (steps: number) => (t: number) => Math.floor(t * steps) / steps;
+
 /** Contact as `kubectl expose`: open a port to me. */
 export default function Contact() {
   return (
@@ -30,18 +34,53 @@ export default function Contact() {
 
           <div className="px-5 md:px-10 pt-8 md:pt-12 pb-10 md:pb-14">
             <div className="term">
-              <p>
-                <span className="ps">$</span> <span className="k">kubectl</span> expose engineer ezekiel{" "}
-                --port=443 --target=<span className="s">your-product</span>
+              <p className="flex flex-wrap items-center gap-x-1.5">
+                <span className="ps">$</span>
+                <motion.span
+                  variants={{
+                    hidden: { clipPath: "inset(0 100% 0 0)" },
+                    show: { clipPath: "inset(0 0% 0 0)", transition: { duration: 1.3, ease: typing(46) } },
+                  }}
+                  className="inline-block"
+                >
+                  <span className="k">kubectl</span> expose engineer ezekiel --port=443 --target=
+                  <span className="s">your-product</span>
+                </motion.span>
               </p>
-              <p className="flex items-center gap-2">
+              <motion.p
+                variants={{
+                  hidden: { opacity: 0, x: -8 },
+                  show: { opacity: 1, x: 0, transition: { delay: 1.45, duration: 0.3 } },
+                }}
+                className="flex items-center gap-2"
+              >
                 <span className="dot ok" /> service/ezekiel exposed
-              </p>
+              </motion.p>
             </div>
 
-            <motion.h2 variants={item} className="giant text-[clamp(4rem,13.5vw,13rem)] mt-10 md:mt-14">
-              Let&apos;s ship <span className="text-transparent [-webkit-text-stroke:1.5px_rgba(148,163,184,0.42)]">it</span>
-              <span className="text-[var(--accent)]">.</span>
+            {/* The line slams in letter by letter once the service is exposed. */}
+            <motion.h2
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.045, delayChildren: 1.6 } } }}
+              className="giant text-[clamp(4rem,13.5vw,13rem)] mt-10 md:mt-14 flex flex-wrap"
+              aria-label="Let's ship it."
+            >
+              {SLAM.map((ch, i) =>
+                ch === " " ? (
+                  <span key={i} className="w-[0.22em]" />
+                ) : (
+                  <span key={i} className="inline-block overflow-hidden pb-[0.03em]" aria-hidden>
+                    <motion.span
+                      variants={{
+                        hidden: { y: "110%", rotate: 8 },
+                        show: { y: "0%", rotate: 0, transition: { type: "spring", stiffness: 420, damping: 24 } },
+                      }}
+                      className={`inline-block ${i >= OUTLINE_FROM && ch !== "." ? "text-transparent [-webkit-text-stroke:1.5px_rgba(148,163,184,0.42)]" : ""} ${ch === "." ? "text-[var(--accent)]" : ""}`}
+                    >
+                      {ch}
+                    </motion.span>
+                  </span>
+                ),
+              )}
             </motion.h2>
 
             <div className="grid md:grid-cols-12 gap-8 mt-10 md:mt-14 items-end">

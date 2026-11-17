@@ -166,7 +166,8 @@ function Orbits({ rotate, ready }: { rotate: MotionValue<number>; ready: boolean
   const ring = (r: number, n: number, offset: number) =>
     Array.from({ length: n }, (_, i) => {
       const a = ((i / n) * 360 + offset) * (Math.PI / 180);
-      return { x: 500 + r * Math.cos(a), y: 500 + r * Math.sin(a), k: `${r}-${i}` };
+      // Rounded so server and client render identical attributes.
+      return { x: Math.round((500 + r * Math.cos(a)) * 100) / 100, y: Math.round((500 + r * Math.sin(a)) * 100) / 100, k: `${r}-${i}` };
     });
   const inner = ring(230, 5, -60);
   const mid = ring(340, 7, -20);
